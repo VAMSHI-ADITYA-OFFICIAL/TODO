@@ -2,7 +2,6 @@
 import "./globals.css";
 
 import { ReactNode, useEffect, useState } from "react";
-import { ThemeProvider } from "next-themes";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<"light" | "dark">("light");
