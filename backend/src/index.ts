@@ -1,12 +1,25 @@
+import dotenv from "dotenv";
+dotenv.config();
+import signupHandler from "./routes/signup.route.ts";
+
 import express from "express";
-import type { Request, Response } from "express";
+import { connectToMongo } from "./db/mongoose.ts";
+
 const app = express();
-const PORT = 8000;
+app.use(express.json());
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World!");
-});
+const PORT = process.env.PORT || 3000;
+const MONGO_URI = process.env.MONGO_URI;
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+app.use("/signup", signupHandler);
+
+console.log("Mongo URI:", MONGO_URI);
+
+const startServer = async () => {
+  await connectToMongo();
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
+};
+
+startServer();
