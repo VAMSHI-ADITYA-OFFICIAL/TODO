@@ -12,7 +12,8 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const variantClasses = {
-    primary: "bg-blue-500 hover:bg-blue-700 text-white",
+    primary:
+      "px-4 py-2 rounded bg-blue-700 hover:bg-blue-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-300",
     secondary: "bg-gray-500 hover:bg-gray-700 text-white",
     danger: "bg-red-500 hover:bg-red-700 text-white",
   };

@@ -2,38 +2,28 @@
 import React from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
+import Logo from "../components/BigLogo";
 
 export default function LoginPage() {
   return (
-    <div className="flex w-full items-center h-screen gap-4">
-      <div className="flex w-1/3 gap-2 -rotate-45">
-        <svg
-          width="128"
-          height="128"
-          viewBox="0 0 24 24"
-          fill="none"
-          className="mr-2"
-        >
-          <circle cx="12" cy="12" r="10" stroke="#3b82f6" strokeWidth="2" />
-          <path
-            d="M8 12l2 2 4-4"
-            stroke="#3b82f6"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-        <span className="text-9xl font-bold text-blue-600 dark:text-blue-400">
-          TODO
-        </span>
+    <div className="flex w-full items-center h-screen gap-4 md:flex-row flex-col">
+      <div
+        className="flex w-1/3 gap-2 justify-center transition-transform duration-500 ease-in-out
+         rotate-0 md:rotate-[-45deg] md:mb-28 mt-5"
+      >
+        <Logo />
       </div>
-      <div className="flex w-2/3 flex-col items-center h-screen justify-center gap-4">
-        <h1>Login/Signup</h1>
-        <form className="flex flex-col gap-4 w-1/2">
-          <Input label="Email" name="email" type="email" />
-          <Input label="password" name="password" type={"password"} />
-          <Button type="submit">Submit</Button>
-        </form>
+      <div className="flex w-2/3 flex-col items-center h-screen md:mt-[20rem] mt-9 p-10">
+        <div className=" bg-gray-900 p-12 rounded-2xl shadow-2xl w-full max-w-md transform transition-transform duration-300 hover:-translate-y-2">
+          <h1 className="text-2xl font-bold text-center mb-6 text-white">
+            Login/Signup
+          </h1>
+          <form className="flex flex-col gap-4 text-white">
+            <Input label="Email" name="email" type="email" />
+            <Input label="Password" name="password" type="password" />
+            <Button type="submit">Submit</Button>
+          </form>
+        </div>
       </div>
     </div>
   );

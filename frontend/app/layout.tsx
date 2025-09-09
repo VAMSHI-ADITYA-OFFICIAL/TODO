@@ -1,8 +1,12 @@
-"use client";
 import ThemeToggle from "./components/ThemeToggle";
 import "./globals.css";
 
 import { ReactNode } from "react";
+
+export const metadata = {
+  title: "My Todo App",
+  description: "A simple and accessible todo application",
+};
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
