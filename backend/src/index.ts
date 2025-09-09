@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
-
-// Load environment variables from .env
 dotenv.config();
+import signupHandler from "./routes/signup.route.ts";
 
 import express from "express";
 import { connectToMongo } from "./db/mongoose.ts";
@@ -12,10 +11,12 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;
 
-console.log("Mongo URI:", MONGO_URI); // just to check
+app.use("/signup", signupHandler);
+
+console.log("Mongo URI:", MONGO_URI);
 
 const startServer = async () => {
-  await connectToMongo(); // uses MONGO_URI inside mongoose.ts
+  await connectToMongo();
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
   });
