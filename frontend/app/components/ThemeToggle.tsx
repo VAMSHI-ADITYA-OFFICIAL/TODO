@@ -13,7 +13,6 @@ export default function ThemeToggle() {
       storedTheme === "light"
         ? false
         : window.matchMedia("(prefers-color-scheme: dark)").matches;
-    console.log(prefersDark);
     setIsDark(storedTheme === "dark" || (storedTheme === null && prefersDark));
     document.documentElement.classList.toggle("dark", prefersDark);
 

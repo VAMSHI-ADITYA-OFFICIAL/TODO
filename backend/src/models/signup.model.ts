@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import { hashPassword } from "../utils/hashpassword.ts";
 
+const passwordRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -21,6 +24,13 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      validate: {
+        validator: (value: string) => {
+          return passwordRegex.test(value);
+        },
+        message:
+          "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+      },
       minlength: 6,
     },
     role: {
