@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { hashPassword } from "../utils/hashpassword.ts";
+import { hashPassword } from "../utils/hashpassword.js";
 
 const passwordRegex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;

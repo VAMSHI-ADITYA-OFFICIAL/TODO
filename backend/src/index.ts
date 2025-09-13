@@ -2,9 +2,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
-import { connectToMongo } from "./db/mongoose.ts";
-import loginRouter from "./routes/login.route.ts";
-import signupRouter from "./routes/signup.route.ts";
+import { connectToMongo } from "./db/mongoose.js";
+import loginRouter from "./routes/login.route.js";
+import signupRouter from "./routes/signup.route.js";
 
 const app = express();
 app.use(express.json());

@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "main": "index.ts",
   "type": "module",
-  "scripts": {
-    "dev": "nodemon --watch src --ext ts --exec \"ts-node-esm ./src/index.ts\"",
-    "start": "node --loader ts-node/esm ./src/index.ts"
+   "scripts":{
+    "dev": "nodemon --watch src --ext ts --exec \"node --loader ts-node/esm src/index.ts\"",
+    "build": "tsc",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -13,18 +14,22 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.19.0",
     "mongoose": "^8.18.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.35.0",
     "@types/bcrypt": "^6.0.0",
+    "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
     "@types/dotenv": "^6.1.1",
     "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/mongodb": "^4.0.6",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^24.3.1",
@@ -33,6 +38,7 @@
     "jiti": "^2.5.1",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.43.0"
   }
