@@ -1,21 +1,33 @@
 import type { Request, Response } from "express";
-import { User } from "../models/signup.model.ts";
+import { User } from "../models/signup.model.js";
 
 export async function SignupHandler(req: Request, res: Response) {
   try {
     const { name, email, password, role } = req.body;
     await User.create({ name, email, password, role });
     return res.status(201).json({ message: "User created successfully" });
-  } catch (err) {
-    if (err.name === "ValidationError") {
+  } catch (err: unknown) {
+    if (
+      err instanceof Error &&
+      err.name === "ValidationError" &&
+      "errors" in err
+    ) {
       const errors: Record<string, string> = {};
-      for (const field in err.errors) {
-        errors[field] = err.errors[field].message;
+      const validationErr = err as {
+        errors: Record<string, { message: string }>;
+      };
+      for (const field in validationErr.errors) {
+        errors[field] = validationErr.errors[field].message;
       }
       return res.status(400).json({ errors });
     }
 
-    if (err.code === 11000) {
+    if (
+      typeof err === "object" &&
+      err !== null &&
+      "code" in err &&
+      (err as { code: number }).code === 11000
+    ) {
       return res.status(400).json({ error: "Email already registered" });
     }
 

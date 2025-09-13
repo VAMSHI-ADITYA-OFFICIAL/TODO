@@ -12,7 +12,7 @@ export default function HomePage() {
     if (user) {
       router.replace("/todos"); // go to todos if logged in
     } else {
-      router.replace("/login"); // go to login if not logged in
+      router.replace("/signup"); // go to login if not logged in
     }
   }, [router]);
 
