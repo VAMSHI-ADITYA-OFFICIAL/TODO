@@ -5,9 +5,24 @@ import express from "express";
 import { connectToMongo } from "./db/mongoose.js";
 import loginRouter from "./routes/login.route.js";
 import signupRouter from "./routes/signup.route.js";
+import cors from "cors";
 
 const app = express();
 app.use(express.json());
+const allowedOrigins = ["http://localhost:3000"];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;

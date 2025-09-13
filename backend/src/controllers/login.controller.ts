@@ -9,6 +9,10 @@ import {
 export async function loginHandler(req: Request, res: Response) {
   const findUser: any = await User.findOne({ email: req.body.email });
 
+  if (!findUser) {
+    return res.status(400).json({ error: "User not found" });
+  }
+
   const comparePass = await comparePassword(
     req.body.password,
     findUser.password
@@ -30,6 +34,7 @@ export async function loginHandler(req: Request, res: Response) {
     accessToken,
     result: { name: findUser.name, id: findUser._id, role: findUser.role },
     message: "Login successful",
+    status: "success",
   });
 }
 
