@@ -10,18 +10,16 @@ export const api = axios.create({
   withCredentials: true, // for cookies (refresh token)
 });
 
-const getAccessToken = () => null;
-
 // Request interceptor
 api.interceptors.request.use(
   (config) => {
     console.info("Request sent to:", config.url);
-    if (!config.url?.includes("/login") && !config.url?.includes("/signup")) {
-      const token = getAccessToken(); // e.g., from memory or server session
-      if (token) {
-        config.headers!["Authorization"] = `Bearer ${token}`;
-      }
-    }
+    // if (!config.url?.includes("/login") && !config.url?.includes("/signup")) {
+    //   const token = getAccessToken(); // e.g., from memory or server session
+    //   if (token) {
+    //     config.headers!["Authorization"] = `Bearer ${token}`;
+    //   }
+    // }
     return config;
   },
   (error) => Promise.reject(error)

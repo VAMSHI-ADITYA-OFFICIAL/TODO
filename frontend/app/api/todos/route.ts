@@ -1,29 +1,39 @@
-import { api } from "@/app/services/axiosInstance";
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { AxiosError } from "axios";
+import { api } from "@/app/services/axiosInstance";
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+    const token = (await cookies()).get("accessToken")?.value;
 
-    const response = await api.post("/todo", body); // uses interceptors automatically
+    const response = await api.post("/todos", body, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
     const nextRes = NextResponse.json(response.data);
+
     const setCookie = response.headers["set-cookie"];
     if (setCookie) {
-      setCookie.forEach((cookie) => {
-        nextRes.headers.append("Set-Cookie", cookie);
-      });
+      if (Array.isArray(setCookie)) {
+        setCookie.forEach((cookie) =>
+          nextRes.headers.append("Set-Cookie", cookie)
+        );
+      } else {
+        nextRes.headers.append("Set-Cookie", setCookie);
+      }
     }
+
     return nextRes;
   } catch (err) {
-    const isAxiosError = err && typeof err === "object" && "response" in err;
-    const axiosErr = err as {
-      response?: { data?: { error?: string }; status?: number };
-    };
-    const errorMessage = isAxiosError
-      ? axiosErr.response?.data?.error || "Login failed"
-      : "Login failed";
-    const statusCode = isAxiosError ? axiosErr.response?.status || 500 : 500;
+    let errorMessage = "Request failed";
+    let statusCode = 500;
+
+    if (err instanceof AxiosError) {
+      errorMessage = err.response?.data?.error || "Request failed";
+      statusCode = err.response?.status || 500;
+    }
 
     return NextResponse.json({ error: errorMessage }, { status: statusCode });
   }
