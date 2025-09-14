@@ -7,14 +7,13 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { loginUser } from "./actions";
 import { useRouter } from "next/navigation";
 import { toastService } from "../services/toastServices";
 
 export default function LoginPage() {
   const router = useRouter();
   const schema = z.object({
-    email: z.string().email("Invalid email address"),
+    email: z.email("Invalid email address"),
     password: z
       .string()
       .min(8, { message: "Password must be at least 6 characters" }),
@@ -28,12 +27,23 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
-  const submitHandler = async (data: FormValues) => {
-    const { result, error } = await loginUser(data);
-    if (error) toastService.show(error, "error");
-    else {
-      toastService.show(result.message, "success");
+  const submitHandler = async (formdata: FormValues) => {
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formdata),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Login failed");
+
+      toastService.show("Login successful!", "success");
       router.push("/todos");
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "An error occurred";
+      toastService.show(errorMessage, "error");
     }
   };
 
@@ -66,7 +76,9 @@ export default function LoginPage() {
               {...register("password")}
               error={errors.password?.message}
             />
-            <Button type="submit">Submit</Button>
+            <Button className="py-2" type="submit">
+              Submit
+            </Button>
           </form>
           <div className="m-2 flex justify-center">
             <Link href={"/signup"}>Signup</Link>

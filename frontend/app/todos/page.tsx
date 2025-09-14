@@ -1,3 +1,9 @@
+import { CreateTodo } from "../components/CreateTodo";
+
 export default function TodoList() {
-  return <>Welocme to todo page</>;
+  return (
+    <>
+      <CreateTodo />
+    </>
+  );
 }
