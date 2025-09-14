@@ -30,3 +30,11 @@ export const generateAccessToken = (user: UserProps) => {
     { expiresIn: "15m" }
   );
 };
+
+export const readAccessToken = (token: string) => {
+  const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+  if (!ACCESS_TOKEN_SECRET) {
+    throw new Error("ACCESS_TOKEN_SECRET is not defined");
+  }
+  return jwt.verify(token, ACCESS_TOKEN_SECRET);
+};

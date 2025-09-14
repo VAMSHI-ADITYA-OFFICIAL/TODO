@@ -21,7 +21,7 @@ export default function Button({
 
   return (
     <button
-      className={`${className} ${variantClasses[variant]} ${
+      className={`cursor-pointer ${className} ${variantClasses[variant]} ${
         fullWidth ? "w-full" : ""
       }`}
       {...props}

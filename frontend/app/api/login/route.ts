@@ -11,10 +11,19 @@ export async function POST(req: NextRequest) {
     const nextRes = NextResponse.json(response.data);
     const setCookie = response.headers["set-cookie"];
     if (setCookie) {
-      setCookie.forEach(cookie => {
+      setCookie.forEach((cookie) => {
         nextRes.headers.append("Set-Cookie", cookie);
       });
     }
+    nextRes.cookies.set({
+      name: "accessToken",
+      value: response.data.accessToken,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 15,
+      sameSite: "lax", // 1 hour
+    });
     return nextRes;
   } catch (err) {
     const isAxiosError = err && typeof err === "object" && "response" in err;

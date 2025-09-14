@@ -7,6 +7,7 @@ import loginRouter from "./routes/login.route.js";
 import signupRouter from "./routes/signup.route.js";
 import todoRouter from "./routes/todo.route.js";
 import cors from "cors";
+import { AuthHandler } from "./middlewares/auth.js";
 
 const app = express();
 app.use(express.json());
@@ -30,7 +31,7 @@ const MONGO_URI = process.env.MONGO_URI;
 
 app.use("/signup", signupRouter);
 app.use("/login", loginRouter);
-app.use("/todo", todoRouter);
+app.use("/todos", AuthHandler, todoRouter);
 
 console.error("Mongo URI:", MONGO_URI);
 

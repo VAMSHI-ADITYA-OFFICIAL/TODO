@@ -1,3 +1,4 @@
+"use server";
 export async function loginUser(data: { email: string; password: string }) {
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/login`,
