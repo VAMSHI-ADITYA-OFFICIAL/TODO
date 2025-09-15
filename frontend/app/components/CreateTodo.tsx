@@ -39,35 +39,39 @@ export const CreateTodo: React.FC = () => {
   return (
     <form
       onSubmit={handleSubmit(submitHandler)}
-      className="flex w-full m-5 justify-center gap-2"
+      className="flex flex-col md:w-[90%] w-7/8 md:flex-row m-5 gap-4 justify-center items-start"
     >
-      <div className="flex flex-col relative">
+      <div className="flex flex-col md:flex-[1] w-full relative">
         <input
-          id={"title"}
-          className={`border rounded-xl px-3 py-2 focus:border-blue-400 focus:outline-none transition-shadow duration-300 hover:shadow-lg hover:border-blue-200`}
+          id="title"
+          className="border rounded-xl px-3 py-2 focus:border-blue-400 focus:outline-none transition-shadow duration-300 hover:shadow-lg hover:border-blue-200"
           {...register("title")}
-          placeholder="Enter Description"
+          placeholder="Enter title"
         />
         {errors.title?.message && (
-          <span className="text-red-500 text-sm mt-1 absolute top-10">
+          <span className="text-red-500 text-sm mt-1">
             {errors.title?.message}
           </span>
         )}
       </div>
-      <div className="flex flex-col w-4/6 relative">
+
+      <div className="flex flex-col md:flex-[2] w-full relative">
         <input
-          id={"description"}
-          className={`border rounded-xl px-3 py-2 focus:border-blue-400 focus:outline-none transition-shadow duration-300 hover:shadow-lg hover:border-blue-200`}
+          id="description"
+          className="border rounded-xl px-3 py-2 focus:border-blue-400 focus:outline-none transition-shadow duration-300 hover:shadow-lg hover:border-blue-200"
           {...register("description")}
-          placeholder="Enter Todo"
+          placeholder="Enter description"
         />
         {errors.description?.message && (
-          <span className="text-red-500 text-sm mt-1 absolute top-10">
+          <span className="text-red-500 text-sm mt-1">
             {errors.description?.message}
           </span>
         )}
       </div>
-      <Button type="submit">Create</Button>
+
+      <Button type="submit" className="h-11 ml-auto">
+        Create
+      </Button>
     </form>
   );
 };

@@ -55,7 +55,7 @@ export default function LoginPage() {
       >
         <Logo />
       </div>
-      <div className="flex w-2/3 flex-col items-center h-screen md:mt-[20rem] mt-9 p-10">
+      <div className="flex md:w-2/3 flex-col items-center h-screen md:mt-[20rem] mt-9 p-10">
         <div className=" bg-gray-900 p-12 rounded-2xl shadow-2xl w-full max-w-md transform transition-transform duration-300 hover:-translate-y-2">
           <h1 className="text-2xl font-bold text-center mb-6 text-white">
             Login
