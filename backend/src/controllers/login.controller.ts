@@ -4,10 +4,19 @@ import { comparePassword, hashPassword } from "../utils/hashpassword.js";
 import {
   generateAccessToken,
   generateRefreshToken,
+  verifyRefreshToken,
 } from "../utils/generateTokens.js";
+import type { UserProps } from "../utils/generateTokens.js";
+import { RefreshToken } from "../models/refresh.model.js";
+
+interface FindUserProps extends UserProps {
+  password: string;
+}
 
 export async function loginHandler(req: Request, res: Response) {
-  const findUser: any = await User.findOne({ email: req.body.email });
+  const findUser: FindUserProps | null = await User.findOne({
+    email: req.body.email,
+  });
 
   if (!findUser) {
     return res.status(400).json({ error: "User not found" });
@@ -24,10 +33,28 @@ export async function loginHandler(req: Request, res: Response) {
 
   const refreshToken = await generateRefreshToken(findUser);
   const accessToken = await generateAccessToken(findUser);
+
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 7);
+
+  // Capture device info from request headers
+  const deviceInfo = {
+    userAgent: req.headers["user-agent"] || "Unknown",
+    ip: req.ip || req.socket.remoteAddress,
+    name: req.body.deviceName || "Unknown Device",
+  };
+
+  await RefreshToken.create({
+    token: refreshToken,
+    userId: findUser._id,
+    device: deviceInfo,
+    expiresAt,
+  });
+
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: true,
-    sameSite: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
   });
 
   res.status(200).json({
@@ -50,3 +77,56 @@ export async function updateUserHandler(req: Request, res: Response) {
   );
   res.status(200).json({ message: "User updated successfully" });
 }
+
+export const refreshTokenHandler = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies?.refreshToken;
+  if (!refreshToken)
+    return res.status(401).json({ message: "No refresh token" });
+
+  try {
+    // 1️⃣ Check token in DB
+    const storedToken = await RefreshToken.findOne({ token: refreshToken });
+    if (!storedToken) {
+      return res.status(403).json({ message: "Invalid refresh token" });
+    }
+
+    // 2️⃣ Verify JWT
+    const decoded = verifyRefreshToken(refreshToken);
+    if (!decoded || typeof decoded === "string") {
+      return res.status(403).json({ message: "Invalid token payload" });
+    }
+
+    const user = decoded as UserProps;
+
+    // 3️⃣ Create new tokens
+    const newAccessToken = generateAccessToken(user);
+    const newRefreshToken = generateRefreshToken(user);
+
+    // 4️⃣ Rotate refresh token in DB
+    await RefreshToken.deleteMany({
+      userId: user._id,
+      "device.userAgent": req.headers["user-agent"],
+    }); // remove old
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
+
+    await RefreshToken.create({
+      token: newRefreshToken,
+      userId: user._id,
+      device: storedToken.device, // preserve device info
+      expiresAt,
+    });
+
+    // 5️⃣ Send new refresh token as cookie
+    res.cookie("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      secure: false, // change to true in production
+      sameSite: "lax", // change to strict in production
+    });
+
+    res.json({ accessToken: newAccessToken });
+  } catch (err) {
+    console.error(err);
+    res.status(403).json({ message: "Token expired or invalid" });
+  }
+};

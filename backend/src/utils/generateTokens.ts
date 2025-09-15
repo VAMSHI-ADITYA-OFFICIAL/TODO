@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
-
-interface UserProps {
+export interface UserProps {
   _id: string;
   name: string;
   email: string;
@@ -12,11 +11,7 @@ export const generateRefreshToken = (user: UserProps) => {
   if (!REFRESH_TOKEN_SECRET) {
     throw new Error("REFRESH_TOKEN_SECRET is not defined");
   }
-  return jwt.sign(
-    { id: user._id, name: user.name, email: user.email, role: user.role },
-    REFRESH_TOKEN_SECRET,
-    { expiresIn: "7d" }
-  );
+  return jwt.sign({ _id: user._id }, REFRESH_TOKEN_SECRET, { expiresIn: "7d" });
 };
 
 export const generateAccessToken = (user: UserProps) => {
@@ -25,7 +20,7 @@ export const generateAccessToken = (user: UserProps) => {
     throw new Error("ACCESS_TOKEN_SECRET is not defined");
   }
   return jwt.sign(
-    { id: user._id, name: user.name, email: user.email, role: user.role },
+    { _id: user._id, name: user.name, email: user.email, role: user.role },
     ACCESS_TOKEN_SECRET,
     { expiresIn: "15m" }
   );
@@ -37,4 +32,11 @@ export const readAccessToken = (token: string) => {
     throw new Error("ACCESS_TOKEN_SECRET is not defined");
   }
   return jwt.verify(token, ACCESS_TOKEN_SECRET);
+};
+export const verifyRefreshToken = (token: string) => {
+  const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+  if (!REFRESH_TOKEN_SECRET) {
+    throw new Error("ACCESS_TOKEN_SECRET is not defined");
+  }
+  return jwt.verify(token, REFRESH_TOKEN_SECRET);
 };

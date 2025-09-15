@@ -8,9 +8,12 @@ import signupRouter from "./routes/signup.route.js";
 import todoRouter from "./routes/todo.route.js";
 import cors from "cors";
 import { AuthHandler } from "./middlewares/auth.js";
+import refreshRouter from "./routes/refresh.route.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 const allowedOrigins = ["http://localhost:3000"];
 
 app.use(
@@ -31,6 +34,7 @@ const MONGO_URI = process.env.MONGO_URI;
 
 app.use("/signup", signupRouter);
 app.use("/login", loginRouter);
+app.use("/refresh", refreshRouter);
 app.use("/todos", AuthHandler, todoRouter);
 
 console.error("Mongo URI:", MONGO_URI);
