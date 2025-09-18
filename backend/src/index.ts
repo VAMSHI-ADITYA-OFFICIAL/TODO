@@ -12,9 +12,7 @@ import refreshRouter from "./routes/refresh.route.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
-app.use(express.json());
-app.use(cookieParser());
-const allowedOrigins = ["http://localhost:3000"];
+const allowedOrigins = ["http://localhost:3000", "http://192.168.0.122:3000"];
 
 app.use(
   cors({
@@ -28,6 +26,8 @@ app.use(
     credentials: true,
   })
 );
+app.use(cookieParser());
+app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;

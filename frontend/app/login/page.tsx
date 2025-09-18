@@ -9,14 +9,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toastService } from "../services/toastServices";
+import { useAuth } from "../context/authContext";
+import { loginUser } from "./actions";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { setUserDetails } = useAuth();
   const schema = z.object({
-    email: z.email("Invalid email address"),
+    email: z.email("Invalid email address").trim(),
     password: z
       .string()
-      .min(8, { message: "Password must be at least 6 characters" }),
+      .min(8, { message: "Password must be at least 6 characters" })
+      .trim(),
   });
 
   type FormValues = z.infer<typeof schema>;
@@ -29,17 +33,10 @@ export default function LoginPage() {
 
   const submitHandler = async (formdata: FormValues) => {
     try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formdata),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Login failed");
-
-      toastService.show("Login successful!", "success");
+      const res = await loginUser(formdata);
+      setUserDetails(res.result);
       router.push("/todos");
+      toastService.show("Login successful!", "success");
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "An error occurred";

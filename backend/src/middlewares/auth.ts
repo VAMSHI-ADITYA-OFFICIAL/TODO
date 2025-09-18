@@ -16,8 +16,8 @@ export const AuthHandler = (
 
   try {
     const token = authHeader.split(" ")[1];
-    const decoded = readAccessToken(token) as { id: string };
-    req.userId = decoded.id; // ✅ attach to request
+    const decoded = readAccessToken(token) as { _id: string };
+    req.userId = decoded._id; // ✅ attach to request
     next();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (err) {

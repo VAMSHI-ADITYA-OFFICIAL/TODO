@@ -1,40 +1,30 @@
 "use server";
+import { revalidatePath } from "next/cache";
+import { requestWithCookie } from "../actions/requestWithCookies";
 
-import { api } from "../services/axiosInstance";
-import { cookies } from "next/headers";
+export type TodoProps = {
+  title: string;
+  description: string;
+  completed: boolean;
+  _id: string;
+  createdAt: string;
+};
 
-export async function getTodos() {
-  try {
-    const token = (await cookies()).get("accessToken")?.value;
-    const res = await api.get(`/todos`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      withCredentials: true,
-    });
-    const todos = res.data;
-    return todos;
-  } catch (err) {
-    console.error("Error fetching todos:", err);
-    return [];
-  }
-}
-
-export async function createTodos(formData: {
+export async function createTodos(data: {
   title: string;
   description: string;
 }) {
-  try {
-    const token = (await cookies()).get("accessToken")?.value;
-    const res = await api.post(`/todos`, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      withCredentials: true,
-    });
+  await requestWithCookie("/todos", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
 
-    return res;
-  } catch (err) {
-    console.error("Error create todos", err);
-  }
+  return revalidatePath("/todos");
+}
+
+export async function fetchTodos() {
+  return await requestWithCookie<{ result: TodoProps[] }>("/todos", {
+    method: "GET",
+  });
 }

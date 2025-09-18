@@ -1,26 +1,23 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(req: NextRequest) {
-  const token = req.cookies.get("accessToken")?.value;
+  // console.log({ req });
   const path = req.nextUrl.pathname;
+  const token = req.cookies.get("accessToken")?.value;
 
   const isAuthRoute = path.startsWith("/login") || path.startsWith("/signup");
+  const isProtectedRoute = path.startsWith("/todos") || path === "/";
 
   if (token && isAuthRoute) {
     return NextResponse.redirect(new URL("/todos", req.url));
   }
-
-  // If user is not logged in and visiting protected route → redirect to /login
-  else if (!token) {
-    if (path.startsWith("/todos") || path === "/") {
-      return NextResponse.redirect(new URL("/login", req.url));
-    }
+  if (!token && isProtectedRoute) {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  return NextResponse.next(); // allow access
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/", "/login", "/signup", "/todos/:path*"], // only these paths run middleware
+  matcher: ["/", "/login", "/signup", "/todos/:path*"],
 };

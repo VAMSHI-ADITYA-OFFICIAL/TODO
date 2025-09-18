@@ -53,8 +53,10 @@ export async function loginHandler(req: Request, res: Response) {
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: false,
+    sameSite: "none",
+    path: "/",
+    expires: expiresAt,
   });
 
   res.status(200).json({
@@ -102,11 +104,15 @@ export const refreshTokenHandler = async (req: Request, res: Response) => {
     const newAccessToken = generateAccessToken(user);
     const newRefreshToken = generateRefreshToken(user);
 
+    // console.log("newRefreshToken", newRefreshToken);
+
     // 4️⃣ Rotate refresh token in DB
     await RefreshToken.deleteMany({
       userId: user._id,
       "device.userAgent": req.headers["user-agent"],
     }); // remove old
+
+    // console.log("old refresh cookie removed");
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
 
@@ -121,10 +127,12 @@ export const refreshTokenHandler = async (req: Request, res: Response) => {
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
       secure: false, // change to true in production
-      sameSite: "lax", // change to strict in production
+      sameSite: "none", // change to strict in production
     });
 
-    res.json({ accessToken: newAccessToken });
+    // console.log("new created refresh cookie", res.header);
+
+    res.status(201).json({ accessToken: newAccessToken });
   } catch (err) {
     console.error(err);
     res.status(403).json({ message: "Token expired or invalid" });
