@@ -1,5 +1,4 @@
 "use server";
-import { revalidatePath } from "next/cache";
 import { requestWithCookie } from "../actions/requestWithCookies";
 
 export type TodoProps = {

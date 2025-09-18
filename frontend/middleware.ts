@@ -6,13 +6,13 @@ export function middleware(req: NextRequest) {
   const token = req.cookies.get("accessToken")?.value;
 
   const isAuthRoute = path.startsWith("/login") || path.startsWith("/signup");
-  const isProtectedRoute = path.startsWith("/todos") || path === "/";
+  const isProtectedRoute = path.startsWith("/todos");
 
   if (token && isAuthRoute) {
     return NextResponse.redirect(new URL("/todos", req.url));
   }
   if (!token && isProtectedRoute) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
   return NextResponse.next();
