@@ -7,7 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toastService } from "../services/toastServices";
 import { createTodos } from "../todos/actions";
 
-export const CreateTodo: React.FC = () => {
+export const CreateTodo: React.FC<{ onSuccess: () => void }> = ({
+  onSuccess,
+}) => {
   const schema = z.object({
     title: z.string().min(3, { message: "Minimum 3 characters" }),
     description: z.string().min(8, { message: "Minimum 6 characters" }),
@@ -23,12 +25,7 @@ export const CreateTodo: React.FC = () => {
   const submitHandler = async (formdata: todoValues) => {
     try {
       await createTodos(formdata);
-      // const res = await fetch("/api/todos", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(formdata),
-      // });
-
+      onSuccess();
       toastService.show("Created successful!", "success");
     } catch (error) {
       const errorMessage =

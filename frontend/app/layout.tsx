@@ -17,7 +17,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning className={geist.className}>
-      <body className="bg-white dark:bg-gray-900 m-2 p-2 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+      <body className="bg-white dark:bg-gray-900 m-2 p-2 text-gray-900 dark:text-gray-100 transition-colors h-screen overflow-hidden duration-300">
         <AuthProvider>
           <ToastProvider>
             <header className="flex">

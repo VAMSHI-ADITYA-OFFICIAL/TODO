@@ -14,13 +14,11 @@ export async function createTodos(data: {
   title: string;
   description: string;
 }) {
-  await requestWithCookie("/todos", {
+  return await requestWithCookie("/todos", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-
-  return revalidatePath("/todos");
 }
 
 export async function fetchTodos() {
