@@ -1,4 +1,3 @@
-import { TodoProps } from "../todos/page";
 import Button from "./Button";
 import { Trash2, CircleCheck, SquareMenu } from "lucide-react";
 import {
@@ -6,6 +5,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { TodoProps } from "../todos/actions";
 
 const ActionButtons = ({ todo }: { todo: TodoProps }) => {
   return (
