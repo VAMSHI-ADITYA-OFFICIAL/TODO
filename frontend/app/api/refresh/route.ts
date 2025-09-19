@@ -1,19 +1,47 @@
-// app/api/refresh/route.ts
-import { NextRequest } from "next/server";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export async function POST(req: NextRequest) {
-  const cookieHeader = req.headers.get("cookie") || "";
+export async function GET(request: Request) {
+  console.log({ request });
+  const url = new URL(request.url);
+  const redirectTo = url.searchParams.get("redirect_to") || "/";
+  const cookieStore = await cookies(); // no need for await
+  const refreshToken = cookieStore.get("refreshToken")?.value;
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_ENDPOINT_URL}/refresh`, {
-    method: "POST",
-    headers: { cookie: cookieHeader }, // forward refreshToken
-  });
+  if (!refreshToken) {
+    cookieStore.delete("accessToken");
+    cookieStore.delete("refreshToken");
+    return redirect("/login"); // ✅ early return
+  }
 
-  const setCookies = res.headers.get("set-cookie");
+  const refreshResponse = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/refresh`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken }),
+    }
+  );
+  console.log({ refreshResponse });
 
-  const headers = new Headers();
-  if (setCookies) headers.set("Set-Cookie", setCookies);
-  headers.set("Content-Type", "application/json");
+  if (refreshResponse.ok) {
+    const res = await refreshResponse.json();
+    console.log({ res });
 
-  return new Response(await res.text(), { headers, status: res.status });
+    cookieStore.set("accessToken", res.accessToken, {
+      httpOnly: true,
+      secure: true,
+    });
+    cookieStore.set("refreshToken", res.refreshToken, {
+      httpOnly: true,
+      secure: true,
+    });
+
+    return redirect(redirectTo); // ✅ don’t wrap in try/catch
+  }
+
+  // If refresh fails
+  cookieStore.delete("accessToken");
+  cookieStore.delete("refreshToken");
+  return redirect("/login");
 }

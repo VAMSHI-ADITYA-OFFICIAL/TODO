@@ -1,5 +1,6 @@
 "use server";
-import { requestWithCookie } from "../actions/requestWithCookies";
+import { fetchWithAuth } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 export type TodoProps = {
   title: string;
@@ -13,15 +14,16 @@ export async function createTodos(data: {
   title: string;
   description: string;
 }) {
-  return await requestWithCookie("/todos", {
+  await fetchWithAuth("/todos", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
+  return revalidatePath("/todos");
 }
 
 export async function fetchTodos() {
-  return await requestWithCookie<{ result: TodoProps[] }>("/todos", {
+  return await fetchWithAuth("/todos", {
     method: "GET",
   });
 }

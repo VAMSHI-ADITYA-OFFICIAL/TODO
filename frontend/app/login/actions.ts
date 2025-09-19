@@ -7,17 +7,11 @@ export async function loginUser(data: {
   password: string;
   //   complted: boolean;
 }) {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/login`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-      credentials: "include",
-    }
-  );
-
-  console.log("response from login actions", response);
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -26,32 +20,14 @@ export async function loginUser(data: {
   const result = await response.json();
   const nextRes = await cookies();
 
-  const setCookieHeader = response.headers.get("set-cookie");
-
-  // Extract refreshToken from it
-  let backendRefreshToken: string | undefined;
-
-  if (setCookieHeader) {
-    const cookiesArray = setCookieHeader.split(","); // handle multiple cookies
-    const refreshCookie = cookiesArray.find((cookie) =>
-      cookie.trim().startsWith("refreshToken=")
-    );
-
-    if (refreshCookie) {
-      // Get only the value before the first semicolon
-      backendRefreshToken = refreshCookie.split(";")[0].split("=")[1];
-    }
-  }
-
-  // console.log("backendRefreshToken:", backendRefreshToken);
-
   nextRes.set({
     name: "refreshToken",
-    value: backendRefreshToken as string,
+    value: result.refreshToken,
     httpOnly: true,
     path: "/",
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 7, // 7 days
   });
 
   nextRes.set({
@@ -61,7 +37,7 @@ export async function loginUser(data: {
     secure: process.env.NODE_ENV === "production",
     path: "/",
     sameSite: "lax", // optional: 'strict' in production
-    // no maxAge — allow server actions to manage refresh
+    maxAge: 60 * 15, // 15 min
   });
 
   return { result };

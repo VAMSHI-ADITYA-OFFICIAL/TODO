@@ -51,16 +51,17 @@ export async function loginHandler(req: Request, res: Response) {
     expiresAt,
   });
 
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "none",
-    path: "/",
-    expires: expiresAt,
-  });
+  // res.cookie("refreshToken", refreshToken, {
+  //   httpOnly: true,
+  //   secure: false,
+  //   sameSite: "none",
+  //   path: "/",
+  //   expires: expiresAt,
+  // });
 
   res.status(200).json({
     accessToken,
+    refreshToken,
     result: { name: findUser.name, id: findUser._id, role: findUser.role },
     message: "Login successful",
     status: "success",
@@ -81,7 +82,8 @@ export async function updateUserHandler(req: Request, res: Response) {
 }
 
 export const refreshTokenHandler = async (req: Request, res: Response) => {
-  const refreshToken = req.cookies?.refreshToken;
+  // const refreshToken = req.cookies?.refreshToken;
+  const refreshToken = req.body.refreshToken;
   if (!refreshToken)
     return res.status(401).json({ message: "No refresh token" });
 
@@ -123,16 +125,11 @@ export const refreshTokenHandler = async (req: Request, res: Response) => {
       expiresAt,
     });
 
-    // 5️⃣ Send new refresh token as cookie
-    res.cookie("refreshToken", newRefreshToken, {
-      httpOnly: true,
-      secure: false, // change to true in production
-      sameSite: "none", // change to strict in production
-    });
-
     // console.log("new created refresh cookie", res.header);
 
-    res.status(201).json({ accessToken: newAccessToken });
+    res
+      .status(201)
+      .json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
   } catch (err) {
     console.error(err);
     res.status(403).json({ message: "Token expired or invalid" });

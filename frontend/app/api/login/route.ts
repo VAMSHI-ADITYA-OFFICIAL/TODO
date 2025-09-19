@@ -7,15 +7,12 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
 
   // Call your backend login API
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/login`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-      credentials: "include", // ensure backend sends refreshToken cookie
-    }
-  );
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+    credentials: "include", // ensure backend sends refreshToken cookie
+  });
 
   const data = await response.json();
   const cookieStore = await cookies();

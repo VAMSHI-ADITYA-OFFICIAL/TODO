@@ -5,7 +5,7 @@ export async function request<T>(
   accessToken?: string,
   refreshToken?: string
 ): Promise<{ data: T; newAccessToken?: string; newRefreshToken?: string }> {
-  let res = await fetch(`${process.env.NEXT_PUBLIC_ENDPOINT_URL}${url}`, {
+  let res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${url}`, {
     ...options,
     headers: {
       ...(options.headers || {}),
@@ -18,7 +18,7 @@ export async function request<T>(
 
   if (res.status === 401 && refreshToken) {
     const refreshRes = await fetch(
-      `${process.env.NEXT_PUBLIC_ENDPOINT_URL}/refresh`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/refresh`,
       {
         method: "POST",
         headers: { Cookie: `refreshToken=${refreshToken}` },
@@ -38,7 +38,7 @@ export async function request<T>(
     newAccessToken = refreshData.accessToken;
 
     // Retry original request with new access token
-    res = await fetch(`${process.env.NEXT_PUBLIC_ENDPOINT_URL}${url}`, {
+    res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${url}`, {
       ...options,
       headers: {
         ...(options.headers || {}),
