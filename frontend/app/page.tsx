@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="flex flex-col items-center m-52 h-screen">
+    <main className="flex flex-col items-center mt-52 h-screen">
       <h1 className="text-2xl">
         Welcome to the SImple Todo Application, Just plain old todo application
       </h1>

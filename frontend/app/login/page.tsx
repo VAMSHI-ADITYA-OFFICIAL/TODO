@@ -32,15 +32,13 @@ export default function LoginPage() {
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
   const submitHandler = async (formdata: FormValues) => {
-    try {
-      const res = await loginUser(formdata);
+    const res = await loginUser(formdata);
+    if (res.error) {
+      toastService.show(res.error, "error");
+    } else {
       setUserDetails(res.result);
       router.push("/todos");
       toastService.show("Login successful!", "success");
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "An error occurred";
-      toastService.show(errorMessage, "error");
     }
   };
 

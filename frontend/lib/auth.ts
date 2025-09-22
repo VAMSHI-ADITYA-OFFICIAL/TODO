@@ -9,9 +9,7 @@ let tokenRefreshPromise: Promise<void> | null = null;
 
 export async function refreshTokens() {
   // If a refresh is already in progress, wait for it to complete.
-  console.log({ outside: tokenRefreshPromise });
   if (tokenRefreshPromise) {
-    console.log({ tokenRefreshPromise });
     return tokenRefreshPromise;
   }
 
@@ -35,8 +33,6 @@ export async function refreshTokens() {
         body: JSON.stringify({ refreshToken }),
       });
 
-      console.log({ refreshResponse });
-
       if (!refreshResponse.ok) {
         cookieStore.delete("accessToken");
         cookieStore.delete("refreshToken");
@@ -45,8 +41,6 @@ export async function refreshTokens() {
 
       const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
         await refreshResponse.json();
-
-      console.log({ newAccessToken, newRefreshToken });
 
       cookieStore.set("accessToken", newAccessToken, {
         httpOnly: true,
@@ -70,8 +64,6 @@ export async function refreshTokens() {
     }
   })();
 
-  console.log({ tokenRefreshPromise });
-
   return tokenRefreshPromise;
 }
 
@@ -92,7 +84,6 @@ export async function fetchWithAuth(
   const data = await response.json();
 
   if (response.status === 401 && retry) {
-    console.log("Token expired, attempting to refresh");
     try {
       await refreshTokens();
       const newAccessToken = cookieStore.get("accessToken")?.value;

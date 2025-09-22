@@ -15,7 +15,7 @@ export async function loginUser(data: {
 
   if (!response.ok) {
     const error = await response.json();
-    return { error: error?.message || "Signup failed" };
+    return error;
   }
   const result = await response.json();
   const nextRes = await cookies();
