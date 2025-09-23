@@ -22,7 +22,7 @@ export const generateAccessToken = (user: UserProps) => {
   return jwt.sign(
     { _id: user._id, name: user.name, email: user.email, role: user.role },
     ACCESS_TOKEN_SECRET,
-    { expiresIn: "2m", notBefore: "0s" } //change it 15m later after testing
+    { expiresIn: "15m", notBefore: "0s" } //change it 15m later after testing
   );
 };
 

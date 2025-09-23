@@ -22,8 +22,9 @@ export async function createTodos(data: {
   return revalidatePath("/todos");
 }
 
-export async function fetchTodos() {
-  return await fetchWithAuth("/todos", {
+export async function fetchTodos<T>(): Promise<T> {
+  const response = await fetchWithAuth("/todos", {
     method: "GET",
   });
+  return response as T;
 }

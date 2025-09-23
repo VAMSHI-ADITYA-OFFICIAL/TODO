@@ -3,7 +3,7 @@ import TodoCard from "../components/TodoCard";
 import { fetchTodos, TodoProps } from "./actions";
 
 export default async function Todos() {
-  const response = await fetchTodos();
+  const response = await fetchTodos<{ result: TodoProps[] }>();
   return (
     <div className="flex flex-col gap-5 justify-center items-center">
       <CreateTodo />
