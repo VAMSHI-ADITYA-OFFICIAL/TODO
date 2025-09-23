@@ -10,10 +10,9 @@ export type TodoProps = {
   createdAt: string;
 };
 
-export async function createTodos(data: {
-  title: string;
-  description: string;
-}) {
+type createTodoProps = Omit<TodoProps, "createdAt" | "_id">;
+
+export async function createTodos(data: createTodoProps) {
   await fetchWithAuth("/todos", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
