@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { Todo } from "../models/todo.model.js";
 import { AuthenticatedRequest } from "../middlewares/auth.js";
+import { Types } from "mongoose";
 
 export async function createTodoHandler(
   req: AuthenticatedRequest,
@@ -66,10 +67,33 @@ export async function getTodoByUserIdHandler(
   res: Response
 ) {
   const userId = req.userId;
-  const todos = await Todo.find({ userId })
-    .sort({ createdAt: -1 })
-    .populate("userId", "name _id")
-    .exec();
+  const result = await Todo.aggregate([
+    {
+      $match: { userId: new Types.ObjectId(userId) }, // cast string to ObjectId
+    },
+    { $sort: { createdAt: -1 } },
+    {
+      $facet: {
+        todos: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "userId",
+              foreignField: "_id",
+              as: "user",
+            },
+          },
+          { $unwind: { path: "$user", preserveNullAndEmptyArrays: true } },
+        ],
+        totalCount: [{ $count: "count" }],
+        completedCount: [{ $match: { completed: true } }, { $count: "count" }],
+      },
+    },
+  ]);
+
+  const todos = result[0].todos;
+  const totalCount = result[0].totalCount[0]?.count || 0;
+  const completedCount = result[0].completedCount[0]?.count || 0;
 
   if (!todos) {
     return res.status(404).json({
@@ -81,5 +105,7 @@ export async function getTodoByUserIdHandler(
     message: "Todo fetched successfully",
     result: todos,
     status: "success",
+    count: totalCount,
+    completedCount: completedCount,
   });
 }
