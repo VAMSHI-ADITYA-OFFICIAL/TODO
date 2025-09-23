@@ -1,28 +1,50 @@
+"use client";
 import Button from "./Button";
-import { Trash2, CircleCheck, SquareMenu } from "lucide-react";
+import {
+  Trash2,
+  CircleCheck,
+  SquareMenu,
+  ClockArrowUp,
+  SquarePen,
+} from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { TodoProps } from "../todos/actions";
+import { AlertDialogBox } from "./AlertBox";
 
 const ActionButtons = ({ todo }: { todo: TodoProps }) => {
   return (
     <>
-      <Button variant="plane" aria-label="Delete todo" title="Delete">
-        <Trash2 aria-hidden="true" className="text-red-500" />
+      <Button variant="plane" aria-label="Update todo" title="Update">
+        <SquarePen className="dark:text-white text-gray-500" />
       </Button>
-
-      {!todo.completed && (
+      {todo.completed ? (
         <Button
           variant="plane"
-          aria-label="Mark todo as complete"
-          title="Complete"
+          aria-label="Mark todo as pending"
+          title="Completed"
         >
           <CircleCheck aria-hidden="true" className="text-green-500" />
         </Button>
+      ) : (
+        <Button
+          variant="plane"
+          aria-label="Mark todo as complete"
+          title="Pending"
+        >
+          <ClockArrowUp className="dark:text-white text-gray-500" />
+        </Button>
       )}
+      <AlertDialogBox
+        title={"Are you absolutely sure?"}
+        description={
+          "This action cannot be undone. This will permanently remove todo from our servers."
+        }
+        submitHandler={() => null}
+      />
     </>
   );
 };
