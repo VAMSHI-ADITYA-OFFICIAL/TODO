@@ -20,6 +20,7 @@ export const CreateTodo: React.FC = () => {
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm<todoValues>({
     resolver: zodResolver(schema),
@@ -30,6 +31,7 @@ export const CreateTodo: React.FC = () => {
   const submitHandler = async (formdata: todoValues) => {
     try {
       await createTodos(formdata);
+      reset();
       toastService.show("Created successful!", "success");
     } catch (error) {
       const errorMessage =

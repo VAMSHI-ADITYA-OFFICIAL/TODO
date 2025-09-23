@@ -1,12 +1,6 @@
 "use client";
 import Button from "./Button";
-import {
-  Trash2,
-  CircleCheck,
-  SquareMenu,
-  ClockArrowUp,
-  SquarePen,
-} from "lucide-react";
+import { CircleCheck, SquareMenu, ClockArrowUp, SquarePen } from "lucide-react";
 import {
   Popover,
   PopoverContent,
