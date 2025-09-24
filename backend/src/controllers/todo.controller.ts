@@ -67,6 +67,14 @@ export async function getTodoByUserIdHandler(
   res: Response
 ) {
   const userId = req.userId;
+  const { cursor, limit = 10 } = req.query;
+
+  const matchStage: Record<string, unknown> = {
+    userId: new Types.ObjectId(userId),
+  };
+  if (cursor) {
+    matchStage._id = { $lt: cursor };
+  }
   const result = await Todo.aggregate([
     {
       $match: { userId: new Types.ObjectId(userId) }, // cast string to ObjectId
@@ -75,6 +83,7 @@ export async function getTodoByUserIdHandler(
     {
       $facet: {
         todos: [
+          { $limit: Number(limit) },
           {
             $lookup: {
               from: "users",
@@ -95,6 +104,8 @@ export async function getTodoByUserIdHandler(
   const totalCount = result[0].totalCount[0]?.count || 0;
   const completedCount = result[0].completedCount[0]?.count || 0;
 
+  const nextCursor = todos.length > 0 ? todos[todos.length - 1]._id : null;
+
   if (!todos) {
     return res.status(404).json({
       message: "Todo not found",
@@ -107,5 +118,39 @@ export async function getTodoByUserIdHandler(
     status: "success",
     count: totalCount,
     completedCount: completedCount,
+    pageInfo: {
+      nextCursor, // send explicitly
+      hasNextPage: !!nextCursor,
+    },
+  });
+}
+
+export async function deleteTodoHandler(req: Request, res: Response) {
+  const todoId = req.params.id;
+  const todo = await Todo.findByIdAndDelete(todoId);
+  if (!todo) {
+    return res.status(404).json({
+      message: "Todo not found",
+      status: "failure",
+    });
+  }
+  return res.status(200).json({
+    message: "Todo deleted successfully",
+    status: "success",
+  });
+}
+
+export async function updateTodoHandler(req: Request, res: Response) {
+  const todoId = req.params.id;
+  const todo = await Todo.findByIdAndUpdate(todoId, req.body, { new: true });
+  if (!todo) {
+    return res.status(404).json({
+      message: "Todo not found",
+      status: "failure",
+    });
+  }
+  return res.status(200).json({
+    message: "Todo updated successfully",
+    status: "success",
   });
 }
