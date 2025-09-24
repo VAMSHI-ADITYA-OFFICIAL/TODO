@@ -7,8 +7,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toastService } from "../services/toastServices";
 import { createTodos } from "../todos/actions";
 import { Switch } from "@/components/ui/switch";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const CreateTodo: React.FC = () => {
+  const queryClient = useQueryClient();
   const schema = z.object({
     title: z.string().min(3, { message: "Minimum 3 characters" }).trim(),
     description: z.string().min(8, { message: "Minimum 6 characters" }).trim(),
@@ -31,6 +33,7 @@ export const CreateTodo: React.FC = () => {
   const submitHandler = async (formdata: todoValues) => {
     try {
       await createTodos(formdata);
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
       reset();
       toastService.show("Created successful!", "success");
     } catch (error) {
