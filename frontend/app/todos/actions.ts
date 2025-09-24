@@ -19,7 +19,6 @@ export async function createTodos(data: createTodoProps) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-  return revalidatePath("/todos");
 }
 
 export async function fetchTodos<T>(): Promise<T> {

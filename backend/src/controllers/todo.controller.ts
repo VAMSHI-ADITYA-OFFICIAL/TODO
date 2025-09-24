@@ -72,18 +72,19 @@ export async function getTodoByUserIdHandler(
   const matchStage: Record<string, unknown> = {
     userId: new Types.ObjectId(userId),
   };
+
   if (cursor) {
-    matchStage._id = { $lt: cursor };
+    // convert cursor to ObjectId for pagination
+    matchStage._id = { $lt: new Types.ObjectId(cursor as string) };
   }
+
   const result = await Todo.aggregate([
-    {
-      $match: { userId: new Types.ObjectId(userId) }, // cast string to ObjectId
-    },
-    { $sort: { createdAt: -1 } },
+    { $match: matchStage },
+    { $sort: { _id: -1 } }, // sort by _id for cursor pagination
     {
       $facet: {
         todos: [
-          { $limit: Number(limit) },
+          { $limit: Number(limit) + 1 }, // fetch one extra to detect next page
           {
             $lookup: {
               from: "users",
@@ -100,26 +101,25 @@ export async function getTodoByUserIdHandler(
     },
   ]);
 
-  const todos = result[0].todos;
+  const todos = result[0].todos || [];
   const totalCount = result[0].totalCount[0]?.count || 0;
   const completedCount = result[0].completedCount[0]?.count || 0;
 
-  const nextCursor = todos.length > 0 ? todos[todos.length - 1]._id : null;
-
-  if (!todos) {
-    return res.status(404).json({
-      message: "Todo not found",
-      status: "failure",
-    });
+  // determine nextCursor
+  let nextCursor: string | null = null;
+  if (todos.length > Number(limit)) {
+    const nextTodo = todos.pop(); // remove extra record
+    nextCursor = nextTodo?._id.toString() || null;
   }
+
   return res.status(200).json({
     message: "Todo fetched successfully",
     result: todos,
     status: "success",
     count: totalCount,
-    completedCount: completedCount,
+    completedCount,
     pageInfo: {
-      nextCursor, // send explicitly
+      nextCursor,
       hasNextPage: !!nextCursor,
     },
   });
