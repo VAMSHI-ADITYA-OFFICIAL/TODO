@@ -6,7 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { TodoProps } from "../todos/actions";
+import { TodoProps, deleteTodo, toggleTodo } from "../todos/actions";
 import { AlertDialogBox } from "./AlertBox";
 
 const ActionButtons = ({ todo }: { todo: TodoProps }) => {
@@ -20,6 +20,9 @@ const ActionButtons = ({ todo }: { todo: TodoProps }) => {
           variant="plane"
           aria-label="Mark todo as pending"
           title="Completed"
+          onClick={() =>
+            toggleTodo<string>(todo._id, { completed: !todo.completed })
+          }
         >
           <CircleCheck aria-hidden="true" className="text-green-500" />
         </Button>
@@ -28,6 +31,9 @@ const ActionButtons = ({ todo }: { todo: TodoProps }) => {
           variant="plane"
           aria-label="Mark todo as complete"
           title="Pending"
+          onClick={() =>
+            toggleTodo<string>(todo._id, { completed: !todo.completed })
+          }
         >
           <ClockArrowUp className="dark:text-white text-gray-500" />
         </Button>
@@ -37,7 +43,7 @@ const ActionButtons = ({ todo }: { todo: TodoProps }) => {
         description={
           "This action cannot be undone. This will permanently remove todo from our servers."
         }
-        submitHandler={() => null}
+        submitHandler={async () => await deleteTodo<string>(todo._id)}
       />
     </>
   );
@@ -49,7 +55,11 @@ export default function TodoCard({ todo }: { todo: TodoProps }) {
     <div className="flex justify-between items-center">
       <div className="flex flex-col gap-2">
         <div className="flex gap-4 items-center">
-          <span className=" text-xl">{todo.title}</span>
+          <span
+            className={` text-xl ${todo.completed ? "text-green-500" : null}`}
+          >
+            {todo.title}
+          </span>
           <span className=" text-sm opacity-70 text-nowrap">
             {formattedDate}
           </span>

@@ -5,7 +5,7 @@ export async function fetchWithAuth(
   url: string,
   options: RequestInit = {},
   retry = true
-): Promise<Response> {
+): Promise<Record<string, unknown>> {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
 
