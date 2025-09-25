@@ -49,7 +49,7 @@ export default function TodoList({
       pageParams: [undefined],
     },
     retry: false,
-    enabled: false,
+    enabled: true,
   });
 
   const todoList = (data?.pages || []).reduce(
@@ -58,8 +58,9 @@ export default function TodoList({
     },
     [] as TodoProps[]
   );
-  const totalCount = initilaTodoResponse.count;
-  const completedCount = initilaTodoResponse.completedCount;
+  const header = (data?.pages && data.pages[0]) || initilaTodoResponse;
+  const totalCount = header.count;
+  const completedCount = header.completedCount;
   const pendingCount = totalCount - completedCount;
   return (
     <>

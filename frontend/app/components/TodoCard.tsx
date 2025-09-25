@@ -7,9 +7,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { TodoProps, deleteTodo, toggleTodo } from "../todos/actions";
+import { toastService } from "../services/toastServices";
+import { useQueryClient } from "@tanstack/react-query";
 import { AlertDialogBox } from "./AlertBox";
 
 const ActionButtons = ({ todo }: { todo: TodoProps }) => {
+  const queryClient = useQueryClient();
   return (
     <>
       <Button variant="plane" aria-label="Update todo" title="Update">
@@ -20,9 +23,23 @@ const ActionButtons = ({ todo }: { todo: TodoProps }) => {
           variant="plane"
           aria-label="Mark todo as pending"
           title="Completed"
-          onClick={() =>
-            toggleTodo<string>(todo._id, { completed: !todo.completed })
-          }
+          onClick={async () => {
+            const res = await toggleTodo<string>(todo._id, {
+              completed: !todo.completed,
+            });
+            if (res?.status === "success") {
+              toastService.show(
+                res.message || "Todo updated successfully",
+                "success"
+              );
+              queryClient.invalidateQueries({ queryKey: ["todos"] });
+            } else {
+              toastService.show(
+                res?.message || "Something went wrong",
+                "error"
+              );
+            }
+          }}
         >
           <CircleCheck aria-hidden="true" className="text-green-500" />
         </Button>
@@ -31,9 +48,23 @@ const ActionButtons = ({ todo }: { todo: TodoProps }) => {
           variant="plane"
           aria-label="Mark todo as complete"
           title="Pending"
-          onClick={() =>
-            toggleTodo<string>(todo._id, { completed: !todo.completed })
-          }
+          onClick={async () => {
+            const res = await toggleTodo<string>(todo._id, {
+              completed: !todo.completed,
+            });
+            if (res?.status === "success") {
+              toastService.show(
+                res.message || "Todo updated successfully",
+                "success"
+              );
+              queryClient.invalidateQueries({ queryKey: ["todos"] });
+            } else {
+              toastService.show(
+                res?.message || "Something went wrong",
+                "error"
+              );
+            }
+          }}
         >
           <ClockArrowUp className="dark:text-white text-gray-500" />
         </Button>
@@ -43,7 +74,18 @@ const ActionButtons = ({ todo }: { todo: TodoProps }) => {
         description={
           "This action cannot be undone. This will permanently remove todo from our servers."
         }
-        submitHandler={async () => await deleteTodo<string>(todo._id)}
+        submitHandler={async () => {
+          const res = await deleteTodo<string>(todo._id);
+          if (res?.status === "success") {
+            toastService.show(
+              res.message || "Todo deleted successfully",
+              "success"
+            );
+            queryClient.invalidateQueries({ queryKey: ["todos"] });
+          } else {
+            toastService.show(res?.message || "Something went wrong", "error");
+          }
+        }}
       />
     </>
   );
