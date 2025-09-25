@@ -50,6 +50,7 @@ export default function TodoList({
         pages: [initilaTodoResponse],
         pageParams: [undefined],
       },
+      refetchOnWindowFocus: false,
       retry: false,
       enabled: true,
     });
@@ -68,7 +69,9 @@ export default function TodoList({
     <>
       <div className="flex flex-col w-full items-center">
         <div className="flex md:w-7/8 px-2 gap-5">
-          <span>Total: {totalCount}</span>
+          <span>
+            Showing: {todoList.length}/{totalCount}
+          </span>
           <span>
             Completed: <span className="text-green-500">{completedCount}</span>
           </span>

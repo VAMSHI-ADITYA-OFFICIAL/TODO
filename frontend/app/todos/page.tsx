@@ -3,12 +3,28 @@ import TodoList from "../components/TodoList";
 import { fetchTodos, TodoProps } from "./actions";
 
 export default async function Todos() {
-  const response = await fetchTodos<{
+  let response: {
     result: TodoProps[];
     count: number;
     completedCount: number;
-    pageInfo: { nextCursor: string; hasNextPage: boolean };
-  }>();
+    pageInfo: { nextCursor: string | undefined; hasNextPage: boolean };
+  };
+
+  try {
+    response = await fetchTodos<{
+      result: TodoProps[];
+      count: number;
+      completedCount: number;
+      pageInfo: { nextCursor: string; hasNextPage: boolean };
+    }>();
+  } catch (_e) {
+    response = {
+      result: [],
+      count: 0,
+      completedCount: 0,
+      pageInfo: { nextCursor: undefined, hasNextPage: false },
+    };
+  }
 
   return (
     <div className="flex flex-col gap-2 justify-center items-center">
