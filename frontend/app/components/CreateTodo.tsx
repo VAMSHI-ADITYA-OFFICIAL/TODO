@@ -13,7 +13,7 @@ export const CreateTodo: React.FC = () => {
   const queryClient = useQueryClient();
   const schema = z.object({
     title: z.string().min(3, { message: "Minimum 3 characters" }).trim(),
-    description: z.string().min(8, { message: "Minimum 6 characters" }).trim(),
+    description: z.string().min(8, { message: "Minimum 8 characters" }).trim(),
     completed: z.boolean(),
   });
   type todoValues = z.infer<typeof schema>;
@@ -32,10 +32,14 @@ export const CreateTodo: React.FC = () => {
   });
   const submitHandler = async (formdata: todoValues) => {
     try {
-      await createTodos(formdata);
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
-      reset();
-      toastService.show("Created successful!", "success");
+      const res = await createTodos(formdata);
+      if (res?.status === "success") {
+        queryClient.invalidateQueries({ queryKey: ["todos"] });
+        reset();
+        toastService.show(res.message || "Created successful!", "success");
+      } else {
+        toastService.show(res?.message || "Something went wrong", "error");
+      }
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "An error occurred";

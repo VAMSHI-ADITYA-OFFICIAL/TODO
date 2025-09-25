@@ -39,8 +39,19 @@ export async function fetchWithAuth(
       }
     );
 
-    const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-      await tokenResponse.json();
+    let newAccessToken: string | undefined;
+    let newRefreshToken: string | undefined;
+    try {
+      const tokens = await tokenResponse.json();
+      newAccessToken = tokens?.accessToken;
+      newRefreshToken = tokens?.refreshToken;
+    } catch (_e) {
+      throw new Error("Failed to parse token refresh response");
+    }
+
+    if (!newAccessToken || !newRefreshToken) {
+      throw new Error("Failed to refresh token");
+    }
 
     const nextRes = await cookies();
 
@@ -64,10 +75,6 @@ export async function fetchWithAuth(
       maxAge: 60 * 15, // 15 min
     });
 
-    if (!newAccessToken) {
-      throw new Error("Failed to refresh token");
-    }
-
     // Retry original request with new token
     response = await fetch(fullUrl, {
       ...options,
@@ -78,7 +85,35 @@ export async function fetchWithAuth(
     });
   }
 
-  const data = await response.json();
+  // Ensure OK and JSON response
+  const contentType = response.headers.get("content-type") || "";
+  if (!response.ok) {
+    let errorBody: unknown = null;
+    if (contentType.includes("application/json")) {
+      try {
+        errorBody = await response.json();
+      } catch (_e) {
+        // ignore
+      }
+    } else {
+      try {
+        const text = await response.text();
+        errorBody = text?.slice(0, 500);
+      } catch (_e) {
+        // ignore
+      }
+    }
+    throw new Error(
+      `Request failed ${response.status}: ${
+        typeof errorBody === "string" ? errorBody : JSON.stringify(errorBody)
+      }`
+    );
+  }
 
-  return data;
+  if (contentType.includes("application/json")) {
+    return (await response.json()) as Record<string, unknown>;
+  }
+  // Fallback: try text to avoid "<!DOCTYPE..." JSON parse crashes
+  const text = await response.text();
+  throw new Error(`Expected JSON but received: ${text.slice(0, 200)}`);
 }

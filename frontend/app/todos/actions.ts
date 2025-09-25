@@ -1,7 +1,5 @@
 "use server";
 import { fetchWithAuth } from "@/lib/auth";
-import { revalidatePath } from "next/cache";
-import { toastService } from "../services/toastServices";
 
 export type TodoProps = {
   title: string;
@@ -14,11 +12,12 @@ export type TodoProps = {
 type createTodoProps = Omit<TodoProps, "createdAt" | "_id">;
 
 export async function createTodos(data: createTodoProps) {
-  await fetchWithAuth("/todos", {
+  const response = (await fetchWithAuth("/todos", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
-  });
+  })) as { message?: string; status?: string };
+  return response;
 }
 
 export async function fetchTodos<T>(): Promise<T> {
@@ -31,16 +30,8 @@ export async function fetchTodos<T>(): Promise<T> {
 export async function deleteTodo<T>(id: T) {
   const response = (await fetchWithAuth(`/todos/${id}`, {
     method: "DELETE",
-  })) as { message: string; status: string };
-  if (response.status === "success") {
-    toastService.show(
-      response.message || "Todo deleted successfully",
-      "success"
-    );
-    return revalidatePath("/todos");
-  } else {
-    toastService.show(response.message || "Something went wrong", "error");
-  }
+  })) as { message?: string; status?: string };
+  return response;
 }
 
 export async function updateTodo<T>(id: T, data: createTodoProps) {
@@ -48,16 +39,8 @@ export async function updateTodo<T>(id: T, data: createTodoProps) {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
-  })) as { message: string; status: string };
-  if (response.status === "success") {
-    toastService.show(
-      response.message || "Todo updated successfully",
-      "success"
-    );
-    return revalidatePath("/todos");
-  } else {
-    toastService.show(response.message || "Something went wrong", "error");
-  }
+  })) as { message?: string; status?: string };
+  return response;
 }
 
 export async function toggleTodo<T>(id: T, data: Pick<TodoProps, "completed">) {
@@ -65,14 +48,6 @@ export async function toggleTodo<T>(id: T, data: Pick<TodoProps, "completed">) {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
-  })) as { message: string; status: string };
-  if (response.status === "success") {
-    toastService.show(
-      response.message || "Todo updated successfully",
-      "success"
-    );
-    return revalidatePath("/todos");
-  } else {
-    toastService.show(response.message || "Something went wrong", "error");
-  }
+  })) as { message?: string; status?: string };
+  return response;
 }
