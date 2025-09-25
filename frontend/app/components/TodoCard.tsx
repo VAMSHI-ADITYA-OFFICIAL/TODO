@@ -9,10 +9,95 @@ import {
 import { TodoProps, deleteTodo, toggleTodo } from "../todos/actions";
 import { toastService } from "../services/toastServices";
 import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { AlertDialogBox } from "./AlertBox";
 
 const ActionButtons = ({ todo }: { todo: TodoProps }) => {
   const queryClient = useQueryClient();
+  const [isToggling, setIsToggling] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const optimisticToggle = async () => {
+    if (isToggling) return;
+    setIsToggling(true);
+
+    // Optimistic update
+    queryClient.setQueryData(["todos"], (oldData: any) => {
+      if (!oldData) return oldData;
+      return {
+        ...oldData,
+        pages: oldData.pages.map((page: any) => ({
+          ...page,
+          result: page.result.map((t: TodoProps) =>
+            t._id === todo._id ? { ...t, completed: !t.completed } : t
+          ),
+        })),
+      };
+    });
+
+    try {
+      const res = await toggleTodo<string>(todo._id, {
+        completed: !todo.completed,
+      });
+      if (res?.status === "success") {
+        toastService.show(
+          res.message || "Todo updated successfully",
+          "success"
+        );
+      } else {
+        // Rollback on error
+        queryClient.invalidateQueries({ queryKey: ["todos"] });
+        toastService.show(res?.message || "Something went wrong", "error");
+      }
+    } catch (error) {
+      // Rollback on error
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+      toastService.show("Failed to update todo", "error");
+    } finally {
+      setIsToggling(false);
+    }
+  };
+
+  const optimisticDelete = async () => {
+    if (isDeleting) return;
+    setIsDeleting(true);
+
+    // Store original data for rollback
+    const previousData = queryClient.getQueryData(["todos"]);
+
+    // Optimistic update - remove the todo
+    queryClient.setQueryData(["todos"], (oldData: any) => {
+      if (!oldData) return oldData;
+      return {
+        ...oldData,
+        pages: oldData.pages.map((page: any) => ({
+          ...page,
+          result: page.result.filter((t: TodoProps) => t._id !== todo._id),
+        })),
+      };
+    });
+
+    try {
+      const res = await deleteTodo<string>(todo._id);
+      if (res?.status === "success") {
+        toastService.show(
+          res.message || "Todo deleted successfully",
+          "success"
+        );
+      } else {
+        // Rollback on error
+        queryClient.setQueryData(["todos"], previousData);
+        toastService.show(res?.message || "Something went wrong", "error");
+      }
+    } catch (error) {
+      // Rollback on error
+      queryClient.setQueryData(["todos"], previousData);
+      toastService.show("Failed to delete todo", "error");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <>
       <Button variant="plane" aria-label="Update todo" title="Update">
@@ -23,23 +108,8 @@ const ActionButtons = ({ todo }: { todo: TodoProps }) => {
           variant="plane"
           aria-label="Mark todo as pending"
           title="Completed"
-          onClick={async () => {
-            const res = await toggleTodo<string>(todo._id, {
-              completed: !todo.completed,
-            });
-            if (res?.status === "success") {
-              toastService.show(
-                res.message || "Todo updated successfully",
-                "success"
-              );
-              queryClient.invalidateQueries({ queryKey: ["todos"] });
-            } else {
-              toastService.show(
-                res?.message || "Something went wrong",
-                "error"
-              );
-            }
-          }}
+          onClick={optimisticToggle}
+          disabled={isToggling}
         >
           <CircleCheck aria-hidden="true" className="text-green-500" />
         </Button>
@@ -48,23 +118,8 @@ const ActionButtons = ({ todo }: { todo: TodoProps }) => {
           variant="plane"
           aria-label="Mark todo as complete"
           title="Pending"
-          onClick={async () => {
-            const res = await toggleTodo<string>(todo._id, {
-              completed: !todo.completed,
-            });
-            if (res?.status === "success") {
-              toastService.show(
-                res.message || "Todo updated successfully",
-                "success"
-              );
-              queryClient.invalidateQueries({ queryKey: ["todos"] });
-            } else {
-              toastService.show(
-                res?.message || "Something went wrong",
-                "error"
-              );
-            }
-          }}
+          onClick={optimisticToggle}
+          disabled={isToggling}
         >
           <ClockArrowUp className="dark:text-white text-gray-500" />
         </Button>
@@ -74,18 +129,7 @@ const ActionButtons = ({ todo }: { todo: TodoProps }) => {
         description={
           "This action cannot be undone. This will permanently remove todo from our servers."
         }
-        submitHandler={async () => {
-          const res = await deleteTodo<string>(todo._id);
-          if (res?.status === "success") {
-            toastService.show(
-              res.message || "Todo deleted successfully",
-              "success"
-            );
-            queryClient.invalidateQueries({ queryKey: ["todos"] });
-          } else {
-            toastService.show(res?.message || "Something went wrong", "error");
-          }
-        }}
+        submitHandler={optimisticDelete}
       />
     </>
   );
