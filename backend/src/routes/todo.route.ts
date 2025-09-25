@@ -11,6 +11,10 @@ const router = Router();
 
 router.route("/").post(createTodoHandler).get(getTodoByUserIdHandler);
 
-router.route("/:id").delete(deleteTodoHandler).patch(updateTodoHandler);
+router
+  .route("/:id")
+  .delete(deleteTodoHandler)
+  .patch(updateTodoHandler)
+  .put(updateTodoHandler);
 
 export default router;
