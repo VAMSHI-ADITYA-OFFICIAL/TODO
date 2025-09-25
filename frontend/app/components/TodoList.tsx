@@ -3,6 +3,7 @@
 import { TodoProps } from "../todos/actions";
 import Button from "./Button";
 import TodoCard from "./TodoCard";
+import TodoSkeleton from "./TodoSkeleton";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 type TodosResponse = {
@@ -34,23 +35,25 @@ export default function TodoList({
 }: {
   initilaTodoResponse: TodosResponse;
 }) {
-  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["todos"],
-    queryFn: ({ pageParam }) => {
-      // console.log({ pageParam });
-      return fetchTodosClient({ cursor: pageParam, limit: 10 });
-    },
-    initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage: TodosResponse) => {
-      return lastPage.pageInfo.nextCursor;
-    },
-    initialData: {
-      pages: [initilaTodoResponse],
-      pageParams: [undefined],
-    },
-    retry: false,
-    enabled: true,
-  });
+  const { data, fetchNextPage, hasNextPage, isFetching, isFetchingNextPage } =
+    useInfiniteQuery({
+      queryKey: ["todos"],
+      queryFn: ({ pageParam }) => {
+        // console.log({ pageParam });
+        return fetchTodosClient({ cursor: pageParam, limit: 10 });
+      },
+      initialPageParam: undefined as string | undefined,
+      getNextPageParam: (lastPage: TodosResponse) => {
+        return lastPage.pageInfo.nextCursor;
+      },
+      initialData: {
+        pages: [initilaTodoResponse],
+        pageParams: [undefined],
+      },
+      refetchOnWindowFocus: false,
+      retry: false,
+      enabled: true,
+    });
 
   const todoList = (data?.pages || []).reduce(
     (total: TodoProps[], cur: TodosResponse) => {
@@ -66,7 +69,9 @@ export default function TodoList({
     <>
       <div className="flex flex-col w-full items-center">
         <div className="flex md:w-7/8 px-2 gap-5">
-          <span>Total: {totalCount}</span>
+          <span>
+            Showing: {todoList.length}/{totalCount}
+          </span>
           <span>
             Completed: <span className="text-green-500">{completedCount}</span>
           </span>
@@ -78,16 +83,21 @@ export default function TodoList({
       <div className="flex flex-col w-full">
         <div className="flex w-full justify-center overflow-clip h-[57vh] md:h-[70vh] overflow-y-auto">
           <ul className="md:w-7/8">
-            {(todoList || []).map((todo: TodoProps) => {
-              return (
-                <li
-                  key={todo._id}
-                  className="flex flex-col m-2 rounded dark:bg-gray-800 dark:border-1 p-2 border-black shadow-xl dark:shadow-blue-950"
-                >
-                  <TodoCard todo={todo} />
-                </li>
-              );
-            })}
+            {isFetching && !isFetchingNextPage
+              ? // Show skeleton for initial load
+                Array.from({ length: 5 }).map((_, index) => (
+                  <TodoSkeleton key={`skeleton-${index}`} />
+                ))
+              : (todoList || []).map((todo: TodoProps) => {
+                  return (
+                    <li
+                      key={todo._id}
+                      className="flex flex-col m-2 rounded dark:bg-gray-800 dark:border-1 p-2 border-black shadow-xl dark:shadow-blue-950"
+                    >
+                      <TodoCard todo={todo} />
+                    </li>
+                  );
+                })}
           </ul>
         </div>
         <div className="flex mx-auto mt-4">
@@ -97,7 +107,7 @@ export default function TodoList({
               variant="primary"
               onClick={() => fetchNextPage()}
             >
-              Load More
+              {isFetchingNextPage ? "Loading..." : "Load More"}
             </Button>
           )}
         </div>
