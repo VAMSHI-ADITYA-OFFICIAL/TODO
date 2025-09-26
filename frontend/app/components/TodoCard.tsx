@@ -75,6 +75,7 @@ const ActionButtons = ({
     () => deleteTodo<string>(todo._id),
     (res) => {
       if (res?.status === "success") {
+        queryClient.invalidateQueries({ queryKey: ["todos"] });
         toastService.show(
           res.message || "Todo deleted successfully",
           "success"

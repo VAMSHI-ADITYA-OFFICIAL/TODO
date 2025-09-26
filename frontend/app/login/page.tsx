@@ -36,6 +36,8 @@ export default function LoginPage() {
     if (res.error) {
       toastService.show(res.error, "error");
     } else {
+      const { result } = res.result;
+      localStorage.setItem("userInfo", JSON.stringify(result));
       setUserDetails(res.result);
       router.push("/todos");
       toastService.show("Login successful!", "success");
