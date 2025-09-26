@@ -1,17 +1,25 @@
 "use client";
 
-import { useAuth } from "../context/authContext";
+import { useAuth, UserProps } from "../context/authContext";
 import ThemeToggle from "./ThemeToggle";
 import UserDetails from "./UserDetails";
 import Button from "./Button";
 import MobileMenu from "./MobileMenu";
 import { LogOut } from "lucide-react";
-import { logoutUser } from "../login/actions";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Header() {
   const { logout } = useAuth();
   const pathname = usePathname();
+  const [userDetails, setUserDetails] = useState<UserProps | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("userInfo");
+    if (stored) {
+      setUserDetails(JSON.parse(stored));
+    }
+  }, []);
 
   return (
     <header className="flex justify-between">
@@ -37,16 +45,15 @@ export default function Header() {
         </span>
       </div>
       <div className="flex items-center gap-2">
-        {pathname.includes("/todos") && <UserDetails />}
+        {pathname.includes("/todos") && (
+          <UserDetails userDetails={userDetails} />
+        )}
         {/* Desktop view - show individual buttons */}
         <div className="hidden md:flex items-center gap-2">
           <ThemeToggle />
           {pathname.includes("/todos") && (
             <Button
-              onClick={() => {
-                logout();
-                logoutUser();
-              }}
+              onClick={logout}
               variant="danger"
               className="flex items-center gap-2 px-4 py-2 text-white hover:bg-red-600 transition-colors duration-200 rounded-md shadow-sm hover:shadow-md"
             >
@@ -56,7 +63,7 @@ export default function Header() {
           )}
         </div>
         {/* Mobile view - show popover menu */}
-        <MobileMenu />
+        <MobileMenu userDetails={userDetails} />
       </div>
     </header>
   );
