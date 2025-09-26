@@ -31,7 +31,7 @@ export function AlertDialogBox({
           <Trash2 aria-hidden="true" className="text-red-500" />
         </Button>
       </AlertDialogTrigger>
-      <AlertDialogContent>
+      <AlertDialogContent className="z-50">
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>

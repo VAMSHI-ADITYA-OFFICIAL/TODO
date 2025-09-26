@@ -1,19 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { UserProps } from "../context/authContext";
 import { CircleUser } from "lucide-react";
+import { UserProps } from "../context/authContext";
 
-export default function UserDetails() {
-  const [userDetails, setUserDetails] = useState<UserProps | null>(null);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("userInfo");
-    if (stored) {
-      setUserDetails(JSON.parse(stored));
-    }
-  }, []);
-
+export default function UserDetails({
+  userDetails,
+}: {
+  userDetails: UserProps | null;
+}) {
   return (
     <div className="md:flex gap-2 hidden">
       <CircleUser />
