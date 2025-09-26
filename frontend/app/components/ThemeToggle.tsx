@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { Sun, Moon } from "lucide-react";
+import Button from "./Button";
 
 export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
@@ -28,9 +29,10 @@ export default function ThemeToggle() {
   };
 
   return (
-    <button
+    <Button
       onClick={toggleTheme}
-      className="ml-auto w-32 gap-2 h-10 rounded-full flex items-center justify-center bg-yellow-300 dark:bg-gray-800 transition-colors"
+      variant="plane"
+      className="ml-auto w-32 gap-2 h-10 rounded-full focus:ring-blue-300 flex items-center justify-center bg-yellow-300 dark:bg-gray-800 transition-colors"
     >
       {isDark ? "Dark" : "Light"}
       {isDark ? (
@@ -38,6 +40,6 @@ export default function ThemeToggle() {
       ) : (
         <Sun className="text-black w-5 h-5" />
       )}
-    </button>
+    </Button>
   );
 }

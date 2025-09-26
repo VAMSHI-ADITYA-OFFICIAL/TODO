@@ -2,11 +2,7 @@
 
 import { cookies } from "next/headers";
 
-export async function loginUser(data: {
-  email: string;
-  password: string;
-  //   complted: boolean;
-}) {
+export async function loginUser(data: { email: string; password: string }) {
   const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -41,4 +37,11 @@ export async function loginUser(data: {
   });
 
   return { result };
+}
+
+export async function logoutUser() {
+  const nextRes = await cookies();
+  nextRes.delete("accessToken");
+  nextRes.delete("refreshToken");
+  return { success: true };
 }
