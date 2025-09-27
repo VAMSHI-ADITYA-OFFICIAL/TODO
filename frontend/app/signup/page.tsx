@@ -13,20 +13,25 @@ import { signupUser } from "./actions";
 
 export default function LoginPage() {
   const router = useRouter();
-  const schema = z.object({
-    name: z
-      .string()
-      .min(8, { message: "Name should be at least 3 characters" }),
-    email: z.email("Invalid email address").trim(),
-    password: z
-      .string()
-      .min(8, { message: "Password must be at least 8 characters" })
-      .trim(),
-    confirmPassword: z
-      .string()
-      .min(8, { message: "Password must be at least 8 characters" })
-      .trim(),
-  });
+  const schema = z
+    .object({
+      name: z
+        .string()
+        .min(3, { message: "Name should be at least 3 characters" }),
+      email: z.string().email({ message: "Invalid email address" }).trim(),
+      password: z
+        .string()
+        .min(8, { message: "Password must be at least 8 characters" })
+        .trim(),
+      confirmPassword: z
+        .string()
+        .min(8, { message: "Password must be at least 8 characters" })
+        .trim(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords do not match",
+      path: ["confirmPassword"], // field where the error should appear
+    });
 
   type FormValues = z.infer<typeof schema>;
 
