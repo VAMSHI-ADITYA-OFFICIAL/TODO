@@ -4,6 +4,7 @@ import { User } from "../models/signup.model.js";
 export async function SignupHandler(req: Request, res: Response) {
   try {
     const { name, email, password, role } = req.body;
+    console.log("Created user body:", req.body);
     const newUser = await User.create({ name, email, password, role });
 
     console.log("Created user:", newUser);

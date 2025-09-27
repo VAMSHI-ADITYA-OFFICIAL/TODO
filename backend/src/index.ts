@@ -21,7 +21,6 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      console.log("Origin received:", origin);
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, origin); // return the origin explicitly
       } else {
