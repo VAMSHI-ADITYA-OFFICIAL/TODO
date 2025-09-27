@@ -23,12 +23,12 @@ app.use(
     origin: (origin, callback) => {
       console.log("Origin received:", origin);
       if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true); // allow request
+        callback(null, origin); // return the origin explicitly
       } else {
-        callback(null, false); // block request gracefully
+        callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true, // can be false if no cookies
+    credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
