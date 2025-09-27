@@ -18,8 +18,6 @@ const allowedOrigins = [
   "https://todo-beta-one-74.vercel.app/",
 ];
 
-console.log("allowed origins", allowedOrigins);
-
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -32,6 +30,11 @@ app.use(
     credentials: true,
   })
 );
+
+app.use((req, res, next) => {
+  console.log("Incoming request origin:", req.headers.origin);
+  next();
+});
 app.use(cookieParser());
 app.use(express.json());
 
