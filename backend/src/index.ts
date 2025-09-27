@@ -12,7 +12,11 @@ import refreshRouter from "./routes/refresh.route.js";
 import cookieParser from "cookie-parser";
 
 const app = express();
-const allowedOrigins = ["http://localhost:3000", "http://192.168.0.122:3000"];
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://192.168.0.122:3000",
+  "https://todo-beta-one-74.vercel.app/",
+];
 
 app.use(
   cors({
