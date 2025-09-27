@@ -40,7 +40,6 @@ export default function LoginPage() {
     if (res.error) {
       toastService.show(res.error, "error");
     } else {
-      const { result } = res.result;
       router.push("/login");
       toastService.show("Signup successful!", "success");
     }
