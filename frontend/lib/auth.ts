@@ -20,6 +20,7 @@ export async function fetchWithAuth(
       ...options.headers,
       Authorization: accessToken ? `Bearer ${accessToken}` : "",
     },
+    credentials: "include",
   });
 
   // If 401 → try refresh once
@@ -35,7 +36,8 @@ export async function fetchWithAuth(
         headers: {
           "Content-Type": "application/json", // ✅ required
         },
-        body: JSON.stringify({ refreshToken }), // always fresh
+        body: JSON.stringify({ refreshToken }),
+        credentials: "include", // always fresh
       }
     );
 
@@ -82,6 +84,7 @@ export async function fetchWithAuth(
         ...options.headers,
         Authorization: `Bearer ${newAccessToken}`,
       },
+      credentials: "include",
     });
   }
 
