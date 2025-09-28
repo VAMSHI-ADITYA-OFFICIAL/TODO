@@ -272,7 +272,7 @@ npm run start    # Start production server
 2. Set environment variables in Vercel dashboard
 3. Deploy automatically on push to main branch
 
-### Backend (Railway/Heroku)
+### Backend (Render)
 
 1. Create a new project on your preferred platform
 2. Connect your GitHub repository
