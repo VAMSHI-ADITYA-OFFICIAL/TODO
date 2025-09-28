@@ -5,6 +5,7 @@ import { ToastProvider } from "@/app/components/ToastProvider";
 import { ReactNode } from "react";
 import { AuthProvider } from "./context/authContext";
 import { ReactQueryProvider } from "./providers";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Header from "./components/Header";
 const geist = Geist({
   subsets: ["latin"],
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <ToastProvider>
               <Header />
               {children}
+              <SpeedInsights />
             </ToastProvider>
           </ReactQueryProvider>
         </AuthProvider>
