@@ -27,7 +27,7 @@ export default defineConfig([
     files: ["**/*.{ts,mts,cts}"],
     ignores: ["dist/**", "node_modules/**"], // <-- again here
     rules: {
-      "no-console": ["error", { allow: ["warn", "error"] }],
+      "no-console": ["error", { allow: ["warn", "error", "info"] }],
     },
   },
 ]);

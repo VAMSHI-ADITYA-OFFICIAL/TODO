@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Logo from "../components/BigLogo";
@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toastService } from "../services/toastServices";
 import { signupUser } from "./actions";
+import InputPasswordComponent from "../components/InputPassword";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -53,12 +54,12 @@ export default function LoginPage() {
   return (
     <div className="flex w-full items-center h-screen gap-4 md:flex-row flex-col">
       <div
-        className="flex w-1/3 gap-2 justify-center transition-transform duration-500 ease-in-out
-         rotate-0 md:rotate-[-45deg] md:mb-28 mt-5"
+        className=" w-1/3 gap-2 hidden justify-center transition-transform duration-500 ease-in-out
+         rotate-0 md:flex md:rotate-[-45deg] md:mb-28 mt-5"
       >
         <Logo />
       </div>
-      <div className="flex md:w-2/3 flex-col items-center h-screen md:mt-[20rem] mt-9 p-10">
+      <div className="flex md:w-2/3 flex-col items-center h-screen md:mt-[15rem] mt-5 p-10">
         <div className=" bg-gray-900 p-12 rounded-2xl shadow-2xl w-full max-w-md transform transition-transform duration-300 hover:-translate-y-2">
           <h1 className="text-2xl font-bold text-center mb-6 text-white">
             Signup
@@ -67,14 +68,31 @@ export default function LoginPage() {
             onSubmit={handleSubmit(submitHandler)}
             className="flex flex-col gap-4 text-white"
           >
-            <Input label="Name" type="string" {...register("name")} />
-            <Input label="Email" {...register("email")} type="email" />
-            <Input label="Password" {...register("password")} type="password" />
             <Input
-              label="Confirm Password"
-              {...register("confirmPassword")}
-              type="password"
+              label="Name"
+              type="string"
+              {...register("name")}
+              error={errors.name?.message}
             />
+            <Input
+              label="Email"
+              {...register("email")}
+              type="email"
+              error={errors.email?.message}
+            />
+            <InputPasswordComponent
+              label={"Password"}
+              name="password"
+              error={errors.password?.message}
+              register={register}
+            />
+            <InputPasswordComponent
+              label={"Confirm Password"}
+              name="confirmPassword"
+              error={errors.confirmPassword?.message}
+              register={register}
+            />
+
             <Button variant="primary" className="h-11" type="submit">
               Submit
             </Button>

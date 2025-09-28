@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { toastService } from "../services/toastServices";
 import { useAuth } from "../context/authContext";
 import { loginUser } from "./actions";
+import InputPasswordComponent from "../components/InputPassword";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -67,11 +68,11 @@ export default function LoginPage() {
               {...register("email")}
               error={errors.email?.message}
             />
-            <Input
-              label="Password"
-              type="password"
-              {...register("password")}
+            <InputPasswordComponent
+              label={"Password"}
+              name="password"
               error={errors.password?.message}
+              register={register}
             />
             <Button className="py-2" type="submit">
               Submit

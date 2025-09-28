@@ -6,6 +6,7 @@ import { connectToMongo } from "./db/mongoose.js";
 import loginRouter from "./routes/login.route.js";
 import signupRouter from "./routes/signup.route.js";
 import todoRouter from "./routes/todo.route.js";
+import logoutRouter from "./routes/logout.route.js";
 import cors from "cors";
 import { AuthHandler } from "./middlewares/auth.js";
 import refreshRouter from "./routes/refresh.route.js";
@@ -43,6 +44,7 @@ app.use("/signup", signupRouter);
 app.use("/login", loginRouter);
 app.use("/refresh", refreshRouter);
 app.use("/todos", AuthHandler, todoRouter);
+app.use("/logout", AuthHandler, logoutRouter);
 
 console.error("Mongo URI:", MONGO_URI);
 

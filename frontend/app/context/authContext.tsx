@@ -20,8 +20,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       // Clear localStorage
       localStorage.removeItem("userInfo");
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
 
       // Clear cookies
       document.cookie =
