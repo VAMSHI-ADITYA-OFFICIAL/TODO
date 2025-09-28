@@ -9,21 +9,48 @@ export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem("theme");
-    const prefersDark =
-      storedTheme === "light"
-        ? false
-        : window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setIsDark(storedTheme === "dark" || (storedTheme === null && prefersDark));
-    document.documentElement.classList.toggle("dark", prefersDark);
+    try {
+      const storedTheme = localStorage.getItem("theme");
+      let shouldBeDark = false;
 
-    setIsDark(prefersDark);
+      if (storedTheme === "dark") {
+        shouldBeDark = true;
+      } else if (storedTheme === "light") {
+        shouldBeDark = false;
+      } else {
+        // No stored theme, use system preference
+        shouldBeDark = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches;
+      }
+
+      setIsDark(shouldBeDark);
+      document.documentElement.classList.toggle("dark", shouldBeDark);
+    } catch (error) {
+      // Handle localStorage errors gracefully
+      console.warn("Failed to load theme from localStorage:", error);
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      setIsDark(prefersDark);
+      document.documentElement.classList.toggle("dark", prefersDark);
+    }
   }, []);
 
   const toggleTheme = () => {
     const newDark = !isDark;
-    localStorage.setItem("theme", newDark ? "dark" : "light");
-    document.documentElement.classList.toggle("dark", newDark);
+
+    try {
+      localStorage.setItem("theme", newDark ? "dark" : "light");
+    } catch (error) {
+      console.warn("Failed to save theme to localStorage:", error);
+    }
+
+    try {
+      document.documentElement.classList.toggle("dark", newDark);
+    } catch (error) {
+      console.warn("Failed to update document class:", error);
+    }
 
     setIsDark(newDark);
   };

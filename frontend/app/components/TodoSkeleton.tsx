@@ -2,7 +2,10 @@
 
 export default function TodoSkeleton() {
   return (
-    <li className="flex flex-col m-2 rounded dark:bg-gray-800 dark:border-1 p-2 border-black shadow-xl dark:shadow-blue-950 animate-pulse">
+    <li
+      data-testid="todo-skeleton"
+      className="flex flex-col m-2 rounded dark:bg-gray-800 dark:border-1 p-2 border-black shadow-xl dark:shadow-blue-950 animate-pulse"
+    >
       <div className="flex justify-between items-center">
         <div className="flex flex-col gap-2 flex-1">
           <div className="flex gap-4 items-center">
