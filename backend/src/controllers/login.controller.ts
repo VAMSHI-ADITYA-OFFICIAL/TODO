@@ -8,6 +8,7 @@ import {
 } from "../utils/generateTokens.js";
 import type { UserProps } from "../utils/generateTokens.js";
 import { RefreshToken } from "../models/refresh.model.js";
+import { AuthenticatedRequest } from "../middlewares/auth.js";
 
 interface FindUserProps extends UserProps {
   password: string;
@@ -133,5 +134,35 @@ export const refreshTokenHandler = async (req: Request, res: Response) => {
   } catch (err) {
     console.error(err);
     res.status(403).json({ message: "Token expired or invalid" });
+  }
+};
+
+export const logoutHandler = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    const userId = req.userId;
+    if (!userId) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    const userAgent = req.headers["user-agent"] || "";
+
+    const result = await RefreshToken.deleteMany({
+      userId,
+      "device.userAgent": userAgent,
+    });
+
+    if (result.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ message: "No active session found for this device" });
+    }
+
+    return res.status(200).json({ message: "Logout successful" });
+  } catch (err) {
+    console.error("Logout error:", err);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };

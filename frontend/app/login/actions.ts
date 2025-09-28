@@ -1,5 +1,6 @@
 "use server";
 
+import { fetchWithAuth } from "@/lib/auth";
 import { cookies } from "next/headers";
 
 export async function loginUser(data: { email: string; password: string }) {
@@ -40,8 +41,15 @@ export async function loginUser(data: { email: string; password: string }) {
 }
 
 export async function logoutUser() {
-  const nextRes = await cookies();
-  nextRes.delete("accessToken");
-  nextRes.delete("refreshToken");
-  return { success: true };
+  const response = await fetchWithAuth(`/logout`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
+  console.log("delete response", response);
+  if (response) {
+    const nextRes = await cookies();
+    nextRes.delete("accessToken");
+    nextRes.delete("refreshToken");
+    return { success: true };
+  }
 }
