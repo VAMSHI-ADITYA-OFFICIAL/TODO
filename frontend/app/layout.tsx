@@ -7,6 +7,7 @@ import { AuthProvider } from "./context/authContext";
 import { ReactQueryProvider } from "./providers";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Header from "./components/Header";
+import { icons } from "lucide-react";
 const geist = Geist({
   subsets: ["latin"],
 });
@@ -14,6 +15,9 @@ const geist = Geist({
 export const metadata = {
   title: "My Todo App",
   description: "A simple and accessible todo application",
+  icons: {
+    icon: "../public/todo.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

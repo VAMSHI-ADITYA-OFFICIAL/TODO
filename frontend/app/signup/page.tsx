@@ -63,12 +63,12 @@ export default function LoginPage() {
       </Head>
       <div className="flex w-full items-center h-screen gap-4 md:flex-row flex-col">
         <div
-          className=" w-1/3 gap-2 hidden justify-center transition-transform duration-500 ease-in-out
-        rotate-0 md:flex md:rotate-[-45deg] md:mb-28 mt-5"
+          className="hidden md:flex w-1/2 justify-center gap-2 transition-transform duration-500 ease-in-out
+                -rotate-45 hover:rotate-0 md:mb-28 mt-5"
         >
           <Logo />
         </div>
-        <div className="flex md:w-2/3 flex-col items-center h-screen md:mt-[15rem] mt-5 p-10">
+        <div className="flex md:w-2/3 flex-col items-center h-screen mt-5 p-10">
           <div className=" bg-gray-900 p-12 rounded-2xl shadow-2xl w-full max-w-md transform transition-transform duration-300 hover:-translate-y-2">
             <h1 className="text-2xl font-bold text-center mb-6 text-white">
               Signup
