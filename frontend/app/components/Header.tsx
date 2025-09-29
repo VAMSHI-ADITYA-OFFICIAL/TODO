@@ -8,6 +8,7 @@ import MobileMenu from "./MobileMenu";
 import { LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function Header() {
   const { logout } = useAuth();
@@ -23,23 +24,16 @@ export default function Header() {
 
   return (
     <header className="flex justify-between">
-      <div className="flex gap-2">
-        <svg
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
-          fill="none"
-          className="mr-2"
-        >
-          <circle cx="12" cy="12" r="10" stroke="#3b82f6" strokeWidth="2" />
-          <path
-            d="M8 12l2 2 4-4"
-            stroke="#3b82f6"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+      <div className="flex  gap-2">
+        <div className="h-7 w-7">
+          <Image
+            src={"/apple-touch-icon.png"}
+            alt="Todo Logo"
+            width={100}
+            height={100}
+            className="object-fit"
           />
-        </svg>
+        </div>
         <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
           TODO
         </span>
