@@ -92,7 +92,7 @@ export default function TodoList({
                   return (
                     <li
                       key={todo._id}
-                      className="flex flex-col m-2 rounded dark:bg-gray-800 dark:border-1 p-2 border-black shadow-xl dark:shadow-blue-950"
+                      className="flex flex-col m-2 rounded bg-gray-50 dark:bg-gray-800 border-gray-950 p-2 shadow shadow-gray-500  dark:shadow-blue-900"
                     >
                       <TodoCard todo={todo} />
                     </li>
