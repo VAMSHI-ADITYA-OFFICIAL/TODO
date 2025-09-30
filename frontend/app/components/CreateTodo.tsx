@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useTransition } from "react";
 import Button from "./Button";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const CreateTodo: React.FC = () => {
+  const [isPending, startTransition] = useTransition();
   const queryClient = useQueryClient();
   const schema = z.object({
     title: z.string().min(3, { message: "Minimum 3 characters" }).trim(),
@@ -33,13 +34,15 @@ export const CreateTodo: React.FC = () => {
   const submitHandler = async (formdata: todoValues) => {
     try {
       const res = await createTodos(formdata);
-      if (res?.status === "success") {
-        queryClient.invalidateQueries({ queryKey: ["todos"] });
-        reset();
-        toastService.show(res.message || "Created successful!", "success");
-      } else {
-        toastService.show(res?.message || "Something went wrong", "error");
-      }
+      startTransition(() => {
+        if (res?.status === "success") {
+          queryClient.invalidateQueries({ queryKey: ["todos"] });
+          reset();
+          toastService.show(res.message || "Created successful!", "success");
+        } else {
+          toastService.show(res?.message || "Something went wrong", "error");
+        }
+      });
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "An error occurred";
@@ -98,7 +101,7 @@ export const CreateTodo: React.FC = () => {
       </div>
 
       <Button type="submit" className="h-11 ml-auto">
-        Create
+        {isPending ? "Loading..." : "Create"}
       </Button>
     </form>
   );

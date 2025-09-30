@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Logo from "../components/BigLogo";
@@ -15,6 +15,7 @@ import Head from "next/head";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const schema = z
     .object({
       name: z
@@ -38,13 +39,15 @@ export default function LoginPage() {
   type FormValues = z.infer<typeof schema>;
 
   const submitHandler = async (formdata: FormValues) => {
-    const res = await signupUser(formdata);
-    if (res.error) {
-      toastService.show(res.error, "error");
-    } else {
-      router.push("/login");
-      toastService.show("Signup successful!", "success");
-    }
+    startTransition(async () => {
+      const res = await signupUser(formdata);
+      if (res.error) {
+        toastService.show(res.error, "error");
+      } else {
+        router.push("/login");
+        toastService.show("Signup successful!", "success");
+      }
+    });
   };
 
   const {
@@ -103,7 +106,7 @@ export default function LoginPage() {
               />
 
               <Button variant="primary" className="h-11" type="submit">
-                Submit
+                {isPending ? "Loading..." : "Submit"}
               </Button>
             </form>
             <div className="m-2 flex items-center">

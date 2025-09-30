@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useTransition } from "react";
 import Input from "../components/Input";
 import Button from "../components/Button";
 import Logo from "../components/BigLogo";
@@ -16,6 +16,7 @@ import Head from "next/head";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const { setUserDetails } = useAuth();
   const schema = z.object({
     email: z.email("Invalid email address").trim(),
@@ -34,16 +35,18 @@ export default function LoginPage() {
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
   const submitHandler = async (formdata: FormValues) => {
-    const res = await loginUser(formdata);
-    if (res.error) {
-      toastService.show(res.error, "error");
-    } else {
-      const { result } = res.result;
-      localStorage.setItem("userInfo", JSON.stringify(result));
-      setUserDetails(res.result);
-      router.push("/todos");
-      toastService.show("Login successful!", "success");
-    }
+    startTransition(async () => {
+      const res = await loginUser(formdata);
+      if (res.error) {
+        toastService.show(res.error, "error");
+      } else {
+        const { result } = res.result;
+        localStorage.setItem("userInfo", JSON.stringify(result));
+        setUserDetails(res.result);
+        router.push("/todos");
+        toastService.show("Login successful!", "success");
+      }
+    });
   };
 
   return (
@@ -84,7 +87,7 @@ export default function LoginPage() {
                 register={register}
               />
               <Button className="py-2" type="submit">
-                Submit
+                {isPending ? "Loading..." : "Login"}
               </Button>
             </form>
             <div className="m-2 flex justify-center">
