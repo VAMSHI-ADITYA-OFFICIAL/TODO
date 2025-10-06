@@ -7,7 +7,6 @@ import {
 } from "../utils/test-utils";
 import TodoList from "../../app/components/TodoList";
 import userEvent from "@testing-library/user-event";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Mock the actions
 jest.mock("../../app/todos/actions", () => ({
@@ -32,20 +31,6 @@ const mockInitialResponse = {
     hasNextPage: false,
     nextCursor: undefined,
   },
-};
-
-const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
 };
 
 describe("TodoList Component", () => {

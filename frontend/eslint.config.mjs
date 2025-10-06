@@ -1,48 +1,59 @@
-// ESLint flat config for Next.js (v9)
-// Tweaks unused-vars to allow underscore-prefixed identifiers
+// eslint.config.mjs
+import { FlatCompat } from "@eslint/eslintrc";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+const compat = new FlatCompat({ baseDirectory: __dirname });
 
-const eslintConfig = [
+const eslintCongif = [
+  // Extend Next.js recommended rules
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+
+  // Ignore test files and coverage folder completely
   {
     ignores: [
       "node_modules/**",
       ".next/**",
       "out/**",
       "build/**",
+      "coverage/**",
+      "**/__tests__/**",
       "next-env.d.ts",
     ],
+  },
+
+  // Global rules for your source code
+  {
     rules: {
-      // For JS files
+      // Allow console.warn/error/info, but error on other console usage
+      "no-console": ["error", { allow: ["warn", "error", "info"] }],
+
+      // Turn off base no-unused-vars, use TS version instead
       "no-unused-vars": [
         "warn",
         {
-          argsIgnorePattern: "^_",
-          varsIgnorePattern: "^_",
+          vars: "all",
+          args: "none", // <- ignore all function/catch arguments
+          argsIgnorePattern: "^_", // ignore args starting with _
+          varsIgnorePattern: "^_", // still allow _prefix vars to be ignored
           ignoreRestSiblings: true,
         },
       ],
-      // For TS files
       "@typescript-eslint/no-unused-vars": [
         "warn",
         {
-          argsIgnorePattern: "^_",
-          varsIgnorePattern: "^_",
+          vars: "all", // Check all variables
+          args: "none", // Ignore unused function arguments
+          argsIgnorePattern: "^_", // Ignore args starting with _
+          varsIgnorePattern: "^_", // Ignore variables starting with _
           ignoreRestSiblings: true,
         },
       ],
-      "no-console": ["error", { allow: ["warn", "error", "info"] }],
     },
   },
 ];
 
-export default eslintConfig;
+export default eslintCongif;

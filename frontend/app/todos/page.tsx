@@ -17,7 +17,7 @@ export default async function Todos() {
       completedCount: number;
       pageInfo: { nextCursor: string; hasNextPage: boolean };
     }>();
-  } catch (_e) {
+  } catch (_error) {
     response = {
       result: [],
       count: 0,

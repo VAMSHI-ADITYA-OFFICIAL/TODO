@@ -2,26 +2,27 @@ import { useState } from "react";
 import Input from "./Input";
 import Button from "./Button";
 import { Eye, EyeOff } from "lucide-react";
+import { UseFormRegister, FieldValues, Path } from "react-hook-form";
 
-type InputProps = {
-  register: any;
+type InputProps<T extends FieldValues = FieldValues> = {
+  register: UseFormRegister<T>;
   error: string | undefined;
   label: string;
-  name: string;
+  name: Path<T>;
 };
 
-export default function InputPasswordComponent({
+export default function InputPasswordComponent<T extends FieldValues = FieldValues>({
   register,
   error,
   label,
-  name,
-}: InputProps) {
+  name: _name,
+}: InputProps<T>) {
   const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="flex relative">
       <Input
         label={label}
-        {...register(name)}
+        {...register(_name)}
         type={showPassword ? "text" : "password"}
         error={error}
       />

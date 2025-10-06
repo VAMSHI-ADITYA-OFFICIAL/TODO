@@ -1,11 +1,11 @@
 type ToastType = "success" | "error" | "info";
 
-let showToastCallback: ((message: string, type?: ToastType) => void) | null =
+let showToastCallback: ((_message: string, _type?: ToastType) => void) | null =
   null;
 
 export const toastService = {
   // Register callback from React provider
-  register: (callback: (message: string, type?: ToastType) => void) => {
+  register: (callback: (_message: string, _type?: ToastType) => void) => {
     showToastCallback = callback;
   },
 

@@ -32,8 +32,7 @@ const ActionButtons = ({
   onEdit: () => void;
 }) => {
   const queryClient = useQueryClient();
-  const [isToggling, setIsToggling] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isToggling, _setIsToggling] = useState(false);
 
   const handleToggle = withOptimisticUpdate(
     queryClient,
@@ -141,7 +140,7 @@ export default function TodoCard({ todo }: { todo: TodoProps }) {
     description: todo.description,
     completed: todo.completed,
   });
-  const [isUpdating, setIsUpdating] = useState(false);
+  const [isUpdating, _setIsUpdating] = useState(false);
   const titleInputRef = useRef<HTMLInputElement>(null);
   const formattedDate = new Date(todo.createdAt).toDateString();
 

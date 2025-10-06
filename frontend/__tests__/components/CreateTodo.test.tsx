@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "../utils/test-utils";
+import { render, screen, waitFor } from "../utils/test-utils";
 import userEvent from "@testing-library/user-event";
 import { CreateTodo } from "../../app/components/CreateTodo";
 
@@ -95,8 +95,6 @@ describe("CreateTodo", () => {
 
   it("submits form with valid data", async () => {
     const mockCreateTodos = require("../../app/todos/actions").createTodos;
-    const mockToastService =
-      require("../../app/services/toastServices").toastService;
 
     mockCreateTodos.mockResolvedValue({
       status: "success",
