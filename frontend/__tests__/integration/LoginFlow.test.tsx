@@ -67,14 +67,14 @@ describe("Login Flow Integration", () => {
 
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /submit/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /login/i })).toBeInTheDocument();
   });
 
   it("shows validation errors for empty fields", async () => {
     const user = userEvent.setup();
     render(<LoginPage />);
 
-    const submitButton = screen.getByRole("button", { name: /submit/i });
+    const submitButton = screen.getByRole("button", { name: /login/i });
     await user.click(submitButton);
 
     // Should show validation errors
@@ -91,7 +91,7 @@ describe("Login Flow Integration", () => {
     const emailInput = screen.getByLabelText(/email/i);
     await user.type(emailInput, "invalid-email");
 
-    const submitButton = screen.getByRole("button", { name: /submit/i });
+    const submitButton = screen.getByRole("button", { name: /login/i });
     await user.click(submitButton);
 
     // The form validation might not work in test environment, so we'll just verify the form exists
@@ -124,7 +124,7 @@ describe("Login Flow Integration", () => {
     await user.type(emailInput, "test@example.com");
     await user.type(passwordInput, "password123");
 
-    const submitButton = screen.getByRole("button", { name: /submit/i });
+    const submitButton = screen.getByRole("button", { name: /login/i });
     await user.click(submitButton);
 
     expect(loginUser).toHaveBeenCalledWith({
@@ -159,7 +159,7 @@ describe("Login Flow Integration", () => {
     await user.type(emailInput, "test@example.com");
     await user.type(passwordInput, "password123");
 
-    const submitButton = screen.getByRole("button", { name: /submit/i });
+    const submitButton = screen.getByRole("button", { name: /login/i });
     await user.click(submitButton);
 
     // Wait for async operations to complete
@@ -192,7 +192,7 @@ describe("Login Flow Integration", () => {
     await user.type(emailInput, "test@example.com");
     await user.type(passwordInput, "wrongpassword");
 
-    const submitButton = screen.getByRole("button", { name: /submit/i });
+    const submitButton = screen.getByRole("button", { name: /login/i });
     await user.click(submitButton);
 
     // Wait for async operations to complete
@@ -237,7 +237,7 @@ describe("Login Flow Integration", () => {
     await user.type(emailInput, "test@example.com");
     await user.type(passwordInput, "password123");
 
-    const submitButton = screen.getByRole("button", { name: /submit/i });
+    const submitButton = screen.getByRole("button", { name: /login/i });
     await user.click(submitButton);
 
     // The button should be disabled during loading (this might not work in tests)
@@ -284,7 +284,7 @@ describe("Login Flow Integration", () => {
     await user.type(emailInput, "test@example.com");
     await user.type(passwordInput, "password123");
 
-    const submitButton = screen.getByRole("button", { name: /submit/i });
+    const submitButton = screen.getByRole("button", { name: /login/i });
     await user.click(submitButton);
 
     // Wait for successful login and redirect
@@ -316,7 +316,7 @@ describe("Login Flow Integration", () => {
     await user.type(emailInput, "test@example.com");
     await user.type(passwordInput, "password123");
 
-    const submitButton = screen.getByRole("button", { name: /submit/i });
+    const submitButton = screen.getByRole("button", { name: /login/i });
     await user.click(submitButton);
 
     // Wait for error handling

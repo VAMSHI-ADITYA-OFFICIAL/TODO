@@ -6,7 +6,7 @@ import TodoCard from "./TodoCard";
 import TodoSkeleton from "./TodoSkeleton";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
-type TodosResponse = {
+export type TodosResponse = {
   result: TodoProps[];
   pageInfo: { nextCursor?: string; hasNextPage: boolean };
   completedCount: number;

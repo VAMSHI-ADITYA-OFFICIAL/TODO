@@ -1,25 +1,5 @@
 // ESLint flat config for Next.js (v9)
 // Tweaks unused-vars to allow underscore-prefixed identifiers
-import next from "eslint-config-next";
-
-export default [
-  ...next(),
-  {
-    rules: {
-      // For JS files
-      "no-unused-vars": [
-        "warn",
-        { argsIgnorePattern: "^_", varsIgnorePattern: "^_", ignoreRestSiblings: true }
-      ],
-      // For TS files
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        { argsIgnorePattern: "^_", varsIgnorePattern: "^_", ignoreRestSiblings: true }
-      ],
-    },
-  },
-];
-
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import { FlatCompat } from "@eslint/eslintrc";
@@ -42,6 +22,24 @@ const eslintConfig = [
       "next-env.d.ts",
     ],
     rules: {
+      // For JS files
+      "no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
+      // For TS files
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
       "no-console": ["error", { allow: ["warn", "error", "info"] }],
     },
   },
