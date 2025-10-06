@@ -21,7 +21,7 @@ export default function LoginPage() {
       name: z
         .string()
         .min(3, { message: "Name should be at least 3 characters" }),
-      email: z.string().email({ message: "Invalid email address" }).trim(),
+      email: z.email({ message: "Invalid email address" }).trim(),
       password: z
         .string()
         .min(8, { message: "Password must be at least 8 characters" })
@@ -82,7 +82,7 @@ export default function LoginPage() {
             >
               <Input
                 label="Name"
-                type="string"
+                type="text"
                 {...register("name")}
                 error={errors.name?.message}
               />
@@ -105,7 +105,12 @@ export default function LoginPage() {
                 register={register}
               />
 
-              <Button variant="primary" className="h-11" type="submit">
+              <Button
+                variant="primary"
+                className="h-11"
+                type="submit"
+                aria-label="submit"
+              >
                 {isPending ? "Loading..." : "Submit"}
               </Button>
             </form>

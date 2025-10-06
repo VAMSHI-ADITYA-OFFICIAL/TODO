@@ -8,17 +8,20 @@ jest.mock("next/navigation", () => ({
   }),
 }));
 
-jest.mock("../../app/context/authContext", () => ({
-  useAuth: () => ({
-    setUserDetails: jest.fn(),
-  }),
-}));
+// import { AuthProvider } from "../../app/context/authContext";
+// import { ToastProvider } from "../../app/components/ToastProvider";
 
-jest.mock("../../app/services/toastServices", () => ({
-  toastService: {
-    show: jest.fn(),
-  },
-}));
+// jest.mock("../../app/context/authContext", () => ({
+//   useAuth: () => ({
+//     setUserDetails: jest.fn(),
+//   }),
+// }));
+
+// jest.mock("../../app/services/toastServices", () => ({
+//   toastService: {
+//     show: jest.fn(),
+//   },
+// }));
 
 jest.mock("../../app/login/actions", () => ({
   loginUser: jest.fn(),
@@ -28,7 +31,8 @@ describe("Login Page", () => {
   it("renders login form with all required fields", () => {
     render(<LoginPage />);
 
-    expect(screen.getByText(/Login/i)).toBeInTheDocument();
+    const heading = screen.getByRole("heading", { name: /login/i });
+    expect(heading).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /login/i })).toBeInTheDocument();
@@ -54,7 +58,7 @@ describe("Login Page", () => {
   it("has correct form structure", () => {
     render(<LoginPage />);
 
-    const form = screen.getByRole("form");
+    const form = screen.getByRole("form", { name: /login form/i });
     expect(form).toBeInTheDocument();
 
     const emailInput = screen.getByRole("textbox", { name: /email/i });

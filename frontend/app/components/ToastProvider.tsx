@@ -26,7 +26,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <>
       {children}
-      <div className="fixed bottom-4 right-4 flex flex-col gap-2">
+      <div
+        data-testid="tooltips"
+        className="fixed bottom-4 right-4 flex flex-col gap-2"
+      >
         {toasts.map((t, index) => (
           <div
             key={index}

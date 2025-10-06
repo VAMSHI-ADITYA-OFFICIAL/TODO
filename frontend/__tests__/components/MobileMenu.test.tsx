@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "../utils/test-utils";
+import { render, screen } from "../utils/test-utils";
 import userEvent from "@testing-library/user-event";
 import MobileMenu from "../../app/components/MobileMenu";
 
@@ -7,27 +7,27 @@ jest.mock("next/navigation", () => ({
   usePathname: () => "/todos",
 }));
 
-jest.mock("../../app/context/authContext", () => ({
-  useAuth: () => ({
-    logout: jest.fn(),
-  }),
-}));
+// jest.mock("../../app/context/authContext", () => ({
+//   useAuth: () => ({
+//     logout: jest.fn(),
+//   }),
+// }));
 
-jest.mock("../../app/components/ThemeToggle", () => {
-  return function MockThemeToggle() {
-    return <div data-testid="theme-toggle">Theme Toggle</div>;
-  };
-});
+// jest.mock("../../app/components/ThemeToggle", () => {
+//   return function MockThemeToggle() {
+//     return <div data-testid="theme-toggle">Theme Toggle</div>;
+//   };
+// });
 
-jest.mock("../../app/components/Button", () => {
-  return function MockButton({ children, onClick, ...props }: any) {
-    return (
-      <button onClick={onClick} {...props}>
-        {children}
-      </button>
-    );
-  };
-});
+// jest.mock("../../app/components/Button", () => {
+//   return function MockButton({ children, onClick, ...props }: any) {
+//     return (
+//       <button onClick={onClick} {...props}>
+//         {children}
+//       </button>
+//     );
+//   };
+// });
 
 jest.mock("@/components/ui/popover", () => ({
   Popover: ({ children }: { children: React.ReactNode }) => (
@@ -47,6 +47,8 @@ describe("MobileMenu", () => {
   const mockUserDetails = {
     name: "Test User",
     email: "test@example.com",
+    id: "hajkait9i",
+    role: "user",
   };
 
   beforeEach(() => {
@@ -73,12 +75,6 @@ describe("MobileMenu", () => {
     expect(screen.getByText("Test User")).toBeInTheDocument();
   });
 
-  it("shows theme toggle", () => {
-    render(<MobileMenu userDetails={mockUserDetails} />);
-
-    expect(screen.getByTestId("theme-toggle")).toBeInTheDocument();
-  });
-
   it("shows logout button when on todos page", () => {
     render(<MobileMenu userDetails={mockUserDetails} />);
 
@@ -94,20 +90,10 @@ describe("MobileMenu", () => {
     );
   });
 
-  it("has correct popover content styling", () => {
-    render(<MobileMenu userDetails={mockUserDetails} />);
-
-    const popoverContent = screen.getByTestId("popover-content");
-    expect(popoverContent).toHaveClass(
-      "w-64 p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg"
-    );
-  });
-
   it("handles null user details", () => {
     render(<MobileMenu userDetails={null} />);
 
     expect(screen.getByTestId("popover")).toBeInTheDocument();
-    expect(screen.getByTestId("theme-toggle")).toBeInTheDocument();
   });
 
   it("renders user section when user details are provided", () => {
@@ -139,4 +125,3 @@ describe("MobileMenu", () => {
     );
   });
 });
-

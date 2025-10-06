@@ -71,6 +71,7 @@ export default function LoginPage() {
               Login
             </h1>
             <form
+              aria-label="login form"
               className="flex flex-col gap-4 text-white"
               onSubmit={handleSubmit(submitHandler)}
             >

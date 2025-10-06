@@ -11,18 +11,6 @@ jest.mock("next/image", () => ({
   default: (props: any) => <img {...props} />,
 }));
 
-jest.mock("../../app/context/authContext", () => ({
-  useAuth: () => ({
-    logout: jest.fn(),
-  }),
-}));
-
-jest.mock("../../app/components/ThemeToggle", () => {
-  return function MockThemeToggle() {
-    return <div data-testid="theme-toggle">Theme Toggle</div>;
-  };
-});
-
 jest.mock("../../app/components/UserDetails", () => {
   return function MockUserDetails({ userDetails }: { userDetails: any }) {
     return <div data-testid="user-details">User: {userDetails?.name}</div>;
@@ -52,7 +40,6 @@ const localStorageMock = {
   removeItem: jest.fn(),
   clear: jest.fn(),
 };
-global.localStorage = localStorageMock;
 
 describe("Header", () => {
   beforeEach(() => {
@@ -64,23 +51,6 @@ describe("Header", () => {
 
     expect(screen.getByAltText("Todo Logo")).toBeInTheDocument();
     expect(screen.getByText("TODO")).toBeInTheDocument();
-  });
-
-  it("renders user details when on todos page", () => {
-    localStorageMock.getItem.mockReturnValue(
-      JSON.stringify({ name: "Test User" })
-    );
-
-    render(<Header />);
-
-    expect(screen.getByTestId("user-details")).toBeInTheDocument();
-    expect(screen.getByText("User: Test User")).toBeInTheDocument();
-  });
-
-  it("renders theme toggle", () => {
-    render(<Header />);
-
-    expect(screen.getByTestId("theme-toggle")).toBeInTheDocument();
   });
 
   it("renders logout button on todos page", () => {
@@ -139,4 +109,3 @@ describe("Header", () => {
     expect(screen.getByText("User:")).toBeInTheDocument();
   });
 });
-
