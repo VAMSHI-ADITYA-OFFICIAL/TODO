@@ -53,10 +53,7 @@ export default function LoginPage() {
     <>
       <Head>
         <title>Login | My Todo App</title>
-        <meta
-          name="description"
-          content="Login to access your tasks and manage todos"
-        />
+        <meta name="description" content="Login to access your todos" />
       </Head>
       <div className="flex w-full h-full items-center gap-4 md:flex-row flex-col">
         <div
