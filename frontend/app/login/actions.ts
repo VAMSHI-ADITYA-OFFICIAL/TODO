@@ -45,7 +45,6 @@ export async function logoutUser() {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
   });
-  console.log("delete response", response);
   if (response) {
     const nextRes = await cookies();
     nextRes.delete("accessToken");

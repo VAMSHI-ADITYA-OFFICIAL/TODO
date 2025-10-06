@@ -59,6 +59,7 @@ export default function ThemeToggle() {
     <Button
       onClick={toggleTheme}
       variant="plane"
+      data-testid='theme-toggle"'
       className="ml-auto w-32 gap-2 h-10 rounded-full focus:ring-blue-300 flex items-center justify-center bg-yellow-300 dark:bg-gray-800 transition-colors"
     >
       {isDark ? "Dark" : "Light"}

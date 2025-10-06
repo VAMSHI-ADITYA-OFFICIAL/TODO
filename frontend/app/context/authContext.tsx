@@ -6,7 +6,7 @@ export interface UserProps {
   role: string;
 }
 interface AuthContextType {
-  setUserDetails: (token: UserProps | null) => void;
+  setUserDetails: (_user: UserProps | null) => void;
   userDetails: UserProps | null;
   logout: () => Promise<void>;
 }

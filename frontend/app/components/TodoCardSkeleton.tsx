@@ -3,7 +3,10 @@ import React from "react";
 
 export default function TodoCardSkeleton() {
   return (
-    <div className="flex justify-between items-center border rounded-lg p-4 shadow-sm animate-pulse bg-white dark:bg-gray-800 w-full mb-4">
+    <div
+      data-testid="todo-card-skeleton"
+      className="flex justify-between items-center border rounded-lg p-4 shadow-sm animate-pulse bg-white dark:bg-gray-800 w-full mb-4"
+    >
       {/* Left content */}
       <div className="flex flex-col gap-2 w-full">
         <div className="flex gap-4 items-center">

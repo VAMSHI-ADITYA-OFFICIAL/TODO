@@ -7,7 +7,6 @@ import {
 } from "../utils/test-utils";
 import TodoList from "../../app/components/TodoList";
 import userEvent from "@testing-library/user-event";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Mock the actions
 jest.mock("../../app/todos/actions", () => ({
@@ -30,22 +29,8 @@ const mockInitialResponse = {
   completedCount: 1,
   pageInfo: {
     hasNextPage: false,
-    nextCursor: null,
+    nextCursor: undefined,
   },
-};
-
-const createWrapper = () => {
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-      },
-    },
-  });
-
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
 };
 
 describe("TodoList Component", () => {
@@ -58,9 +43,7 @@ describe("TodoList Component", () => {
   });
 
   it("renders todo list with todos", () => {
-    render(<TodoList initilaTodoResponse={mockInitialResponse} />, {
-      wrapper: createWrapper(),
-    });
+    render(<TodoList initilaTodoResponse={mockInitialResponse} />);
 
     // Should show statistics
     expect(screen.getByText(/showing:/i)).toBeInTheDocument();
@@ -69,9 +52,7 @@ describe("TodoList Component", () => {
   });
 
   it("shows todo count and statistics", () => {
-    render(<TodoList initilaTodoResponse={mockInitialResponse} />, {
-      wrapper: createWrapper(),
-    });
+    render(<TodoList initilaTodoResponse={mockInitialResponse} />);
 
     expect(screen.getByText(/showing:/i)).toBeInTheDocument();
     expect(screen.getByText(/completed:/i)).toBeInTheDocument();
@@ -87,9 +68,7 @@ describe("TodoList Component", () => {
       },
     };
 
-    render(<TodoList initilaTodoResponse={responseWithNextPage} />, {
-      wrapper: createWrapper(),
-    });
+    render(<TodoList initilaTodoResponse={responseWithNextPage} />);
 
     expect(
       screen.getByRole("button", { name: /load more/i })
@@ -102,9 +81,7 @@ describe("TodoList Component", () => {
       result: [],
     };
 
-    render(<TodoList initilaTodoResponse={loadingResponse} />, {
-      wrapper: createWrapper(),
-    });
+    render(<TodoList initilaTodoResponse={loadingResponse} />);
 
     // Should show skeleton components during loading
     expect(screen.getAllByTestId("todo-skeleton")).toHaveLength(5);
@@ -117,13 +94,11 @@ describe("TodoList Component", () => {
       completedCount: 0,
       pageInfo: {
         hasNextPage: false,
-        nextCursor: null,
+        nextCursor: undefined,
       },
     };
 
-    render(<TodoList initilaTodoResponse={emptyResponse} />, {
-      wrapper: createWrapper(),
-    });
+    render(<TodoList initilaTodoResponse={emptyResponse} />);
 
     expect(screen.getByText(/showing: 0\/0/i)).toBeInTheDocument();
     expect(screen.getByText(/completed:/i)).toBeInTheDocument();
@@ -140,9 +115,7 @@ describe("TodoList Component", () => {
       },
     };
 
-    render(<TodoList initilaTodoResponse={responseWithNextPage} />, {
-      wrapper: createWrapper(),
-    });
+    render(<TodoList initilaTodoResponse={responseWithNextPage} />);
 
     const loadMoreButton = screen.getByRole("button", { name: /load more/i });
     await user.click(loadMoreButton);
@@ -151,9 +124,7 @@ describe("TodoList Component", () => {
   });
 
   it("displays todo cards correctly", () => {
-    render(<TodoList initilaTodoResponse={mockInitialResponse} />, {
-      wrapper: createWrapper(),
-    });
+    render(<TodoList initilaTodoResponse={mockInitialResponse} />);
 
     // Should show statistics and skeleton loading
     expect(screen.getByText(/showing:/i)).toBeInTheDocument();
